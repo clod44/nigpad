@@ -18,10 +18,11 @@ export default function Search({
         filterNotes(searchTerm);
     }, [notes]);
 
-
     const fuse = new Fuse(notes, {
         keys: ['title', 'content'],
-        threshold: 0.3
+        threshold: 0.3,
+        ignoreLocation: true,
+        includeScore: true
     });
 
     const handleSearchTermUpdate = (e) => {
