@@ -27,7 +27,7 @@ function NoteCard({
             <Divider />
             <CardBody className="max-h-32">
                 <ScrollShadow hideScrollBar className="w-full h-full" size={40}>
-                    <p>{note.content}</p>
+                    <p>{note?.content.substring(0, 400) + (note.content.length > 200 ? '...' : '')}</p>
                 </ScrollShadow>
             </CardBody>
         </Card >
