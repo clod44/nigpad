@@ -9,6 +9,7 @@ basic note taking webapp. for now, usese the browser's storage
 - 
     - [ ] Add folder organization
     - [x] Implement search functionality
+    - [ ] Sort search results (e.g. lastUpdated)
     - [ ] Support markdown/rich formatting
     - [ ] Introduce a tagging system  
     - [ ] Add dark mode toggle
