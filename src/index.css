@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.metallic-text {
+    background: linear-gradient(180deg, #e1e1e1 50%, #929292 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hide-scroll {
+    scrollbar-width: none;
+    /* Hide scrollbar in Firefox */
+    -ms-overflow-style: none;
+    /* Hide scrollbar in Internet Explorer and Edge */
+}
+
+.hide-scroll::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar in Chrome, Safari, and Webkit-based browsers */
+}
