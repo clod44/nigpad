@@ -43,7 +43,7 @@ function Edit({
     };
 
     return (
-        <div className="h-full flex flex-col gap-3 p-4 overflow-hidden">
+        <div className="h-full flex flex-col gap-3 p-4 pb-0 overflow-hidden">
             <Input
                 type="text"
                 variant="underlined"
