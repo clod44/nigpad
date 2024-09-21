@@ -64,7 +64,7 @@ export default function Search({
     return (
         <Input
             type="text"
-            label={searchTerm ? `${filteredNotes.length} found` : ""}
+            label={searchTerm ? `${filteredNotes.length} found` : `${notes.length} notes`}
             placeholder="Search"
             labelPlacement="inside"
             value={searchTerm}
