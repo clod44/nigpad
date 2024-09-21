@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { formatTimestamp } from '../utils/dateUtils';
 import GetIcon from '../icons/GetIcon';
-import { Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
+import { Button, Popover, PopoverContent, PopoverTrigger, Link } from '@nextui-org/react';
 
 
 function StatusBar({
@@ -46,11 +46,18 @@ function StatusBar({
     );
 
     return (
-        <div className="px-4 text-default-500 text-xs flex justify-end flex-nowrap align-middle">
+        <div className="px-4 text-default-500 text-xs flex justify-between flex-nowrap align-middle">
+
+            <a href="https://github.com/clod44/nigpad" target="_blank" rel="noopener noreferrer">
+                <Button variant='light' color='foreground' size='sm' style={{ height: "1.5rem" }}>
+                    <GetIcon name='Code' size={20} />
+                </Button>
+            </a>
 
             <Popover >
                 <PopoverTrigger>
-                    <Button variant='light' color='primary' size='sm' style={{ height: "1.5rem" }}><GetIcon name="Info" strokeWidth={1.5} size={20} />
+                    <Button variant='light' color='foreground' size='sm' style={{ height: "1.5rem" }}>
+                        <GetIcon name="Info" strokeWidth={1.5} size={20} />
                         {formatTimestamp(currentTimestamp)}
                     </Button>
 
@@ -58,7 +65,7 @@ function StatusBar({
                 {detailsContent}
             </Popover>
 
-        </div>
+        </div >
     );
 }
 
