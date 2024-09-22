@@ -13,32 +13,28 @@ function NoteCard({
     return (
         <Card className="bg-background border border-default-100 shadow-lg duration-300" isHoverable
             isFooterBlurred>
-            <CardHeader className="flex gap-3" >
-                < div className="w-full flex justify-between" >
-                    <div className="grid grid-cols-12 w-full">
-                        <Link to={`/note/${note.id}`} className="col-span-11 hover:text-primary " >
-                            <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={40}>
-                                <p className="text-md text-nowrap">{note.title}</p>
-                                <p className="text-xs text-default-500 text-nowrap col-span-1">{formatTimestamp(note.timestamp)}</p>
-                            </ScrollShadow>
-                        </Link>
-                    </div>
-                    <NoteCardMore id={note.id} deleteNote={deleteNote} />
-                </div >
-            </CardHeader >
             <Divider />
-            <CardBody className="max-h-32">
+            <CardBody className="min-h-32 max-h-60">
                 <ScrollShadow hideScrollBar className="w-full h-full" size={40}>
-                    <p>{note?.content.substring(0, 400) + (note.content.length > 200 ? '...' : '')}</p>
+                    <p className="text-foreground-500">{note?.content.substring(0, 600) + (note.content.length > 600 ? '...' : '')}</p>
                 </ScrollShadow>
             </CardBody>
             <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 pe-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-                <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={40}>
-                    <p className="text-tiny text-foreground-500 text-nowrap">{note.tags.map(noteTag => tags.find(tag => tag.id === noteTag).title).join(', ')}</p>
-                </ScrollShadow>
-                <Button className="text-tiny text-foreground" variant="faded" color="primary" radius="md" size="sm">
-                    Notify me
-                </Button>
+                <div className="w-full flex gap-2 flex-nowrap items-center">
+                    <div className="flex flex-col gap-2 flex-nowrap flex-grow">
+                        <div className="w-full grid grid-cols-12">
+                            <Link to={`/note/${note.id}`} className="col-span-11 text-primary hover:text-foreground hover:py-2 duration-300" >
+                                <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={40}>
+                                    <p className="text-md text-nowrap">{note.title}</p>
+                                    <p className="text-xs text-default-500 text-nowrap col-span-1">{formatTimestamp(note.timestamp)}</p>
+                                    <p className="text-tiny text-foreground-500 text-nowrap">{note.tags.map(noteTag => tags.find(tag => tag.id === noteTag).title).join(', ')}</p>
+                                </ScrollShadow>
+                            </Link>
+                        </div>
+
+                    </div>
+                    <NoteCardMore id={note.id} deleteNote={deleteNote} />
+                </div>
             </CardFooter>
         </Card >
     );
