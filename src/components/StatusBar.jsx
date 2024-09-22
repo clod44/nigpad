@@ -20,7 +20,7 @@ function StatusBar({
 
 
     const detailsContent = (
-        <PopoverContent className='border border-default-100 overflow-hidden dark bg-background text-foreground-500' >
+        <PopoverContent className='border border-default-100 overflow-hidden bg-background text-foreground-500' >
             <div className="px-1 py-2">
                 {currentNote && (
                     <div className="text-small font-bold text-center">Details</div>

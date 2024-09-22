@@ -19,7 +19,7 @@ function NoteCardMore({
 
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
     return (
-        <Dropdown className="dark text-foreground shadow border border-default-100">
+        <Dropdown className="text-foreground shadow border border-default-100">
             <DropdownTrigger>
                 <Button isIconOnly variant="light">
                     <GetIcon name="More" />
