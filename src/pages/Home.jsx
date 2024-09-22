@@ -20,7 +20,7 @@ function Home({
         <div className="flex flex-col flex-grow overflow-y-auto">
             <div className="grid grid-cols-1 sm:grid-cols-3 px-6 pt-5">
                 <Spacer className="hidden sm:block" />
-                <Search notes={notes} setFilteredNotes={setFilteredNotes} filteredNotes={filteredNotes} />
+                <Search notes={notes} setFilteredNotes={setFilteredNotes} filteredNotes={filteredNotes} tags={tags} />
                 <Spacer className="hidden sm:block" />
             </div>
             <ScrollShadow hideScrollBar className="w-full flex-grow" size={40}>
