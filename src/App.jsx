@@ -15,20 +15,20 @@ function App() {
     });
 
     const addNote = (title, content) => {
+        const timestamp = Date.now();
         const newNote = {
             id: uuidv4(),
             title: title || "",
             content: content || "",
-            timestamp: Date.now(),
-            lastUpdated: Date.now()
+            timestamp: timestamp,
+            lastUpdated: timestamp
         };
         setNotes((prevNotes) => {
             const updatedNotes = [...prevNotes, newNote];
             localStorage.setItem('notes', JSON.stringify(updatedNotes));
             return updatedNotes;
         });
-        console.log("aaa")
-        return newNote.id;
+        return newNote;
     };
 
     const deleteNote = (id) => {
@@ -77,7 +77,7 @@ function App() {
     return (
         <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
             <Router>
-                <NavbarComponent addNote={addNote} />
+                <NavbarComponent addNote={addNote} currentNote={currentNote} />
                 <Routes>
                     <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} setCurrentNote={setCurrentNote} />} />
                     <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} setCurrentNote={setCurrentNote} />} />

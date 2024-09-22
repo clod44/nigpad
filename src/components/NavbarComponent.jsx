@@ -1,13 +1,33 @@
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Link, Tooltip } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
 
-function NavbarComponent({ addNote }) {
+function NavbarComponent({
+    addNote,
+    currentNote,
+    ...props }
+) {
     const navigate = useNavigate();
+    const [isCurrentNoteNew, setIsCurrentNoteNew] = useState(false);
+    useEffect(() => {
+        if (currentNote) {
+            setIsCurrentNoteNew(currentNote.lastUpdated - currentNote.timestamp < 1000);
+        } else {
+            setIsCurrentNoteNew(false);
+        }
+    }, []);
+    useEffect(() => {
+        if (currentNote) {
+            setIsCurrentNoteNew(currentNote.lastUpdated - currentNote.timestamp < 1000);
+        } else {
+            setIsCurrentNoteNew(false);
+        }
+    }, [currentNote]);
 
     const handleNewNote = () => {
-        const newNoteId = addNote();
-        navigate(`/note/${newNoteId}`);
+        const newNote = addNote();
+        navigate(`/note/${newNote.id}`);
     };
     return (
         <Navbar variant="fixed" className="h-10 pt-4">
@@ -29,9 +49,13 @@ function NavbarComponent({ addNote }) {
                         content="New Note"
                         placement="Bottom"
                     >
-                        <Button isIconOnly color="primary" variant="faded" onClick={handleNewNote}>
-                            <GetIcon name="NewFile" />
-                        </Button>
+                        {
+                            !isCurrentNoteNew && (
+                                <Button isIconOnly color="primary" variant="faded" onClick={handleNewNote}>
+                                    <GetIcon name="NewFile" />
+                                </Button>
+                            )
+                        }
                     </Tooltip>
                 </NavbarItem>
             </NavbarContent>

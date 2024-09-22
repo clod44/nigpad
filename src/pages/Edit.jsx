@@ -6,6 +6,7 @@ import { ScrollShadow } from "@nextui-org/scroll-shadow";
 function Edit({
     notes,
     updateNote,
+    currentNote,
     setCurrentNote,
     ...props
 }) {
@@ -22,7 +23,7 @@ function Edit({
             setContent(note.content);
             setCurrentNote(note);
         }
-    }, []);
+    }, [id]);
     useEffect(() => {
         setCurrentNote(note || null);
     }, [note]);
