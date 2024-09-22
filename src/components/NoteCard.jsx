@@ -27,7 +27,7 @@ function NoteCard({
                                 <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={40}>
                                     <p className="text-md text-nowrap">{note.title}</p>
                                     <p className="text-xs text-default-500 text-nowrap col-span-1">{formatTimestamp(note.timestamp)}</p>
-                                    <p className="text-tiny text-foreground-500 text-nowrap">{note.tags.map(noteTag => tags.find(tag => tag.id === noteTag).title).join(', ')}</p>
+                                    <p className="text-tiny text-foreground-500 text-nowrap">{note.tags?.map(noteTag => tags?.find(tag => tag.id === noteTag).title).join(', ')}</p>
                                 </ScrollShadow>
                             </Link>
                         </div>
