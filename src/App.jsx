@@ -97,7 +97,7 @@ function App() {
         const getRandomTags = () => {
             const selectedTags = [];
             for (let i = 0; i < tags.length; i++) {
-                if (Math.random() > 0.5) {
+                if (Math.random() < 0.3) {
                     selectedTags.push(tags[i].id);
                 }
             }
@@ -106,10 +106,10 @@ function App() {
 
         const newNotes = [];
         for (let i = 0; i < 5; i++) {
-            const title = faker.lorem.words(2);
-            const content = faker.lorem.paragraphs(2);
+            const title = faker.lorem.words(Math.floor(Math.random() * 3) + 1);
+            const content = faker.lorem.paragraphs(Math.floor(Math.random() * 10) + 1);
             const timestamp = Date.now();
-            const newTags = getRandomTags(); // Get unique tags for each note
+            const newTags = getRandomTags();
 
             newNotes.push({
                 id: uuidv4(),
