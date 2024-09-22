@@ -15,7 +15,7 @@ Simple Note taking webapp. Uses Browser's storage.
     - [x] Implement search functionality
     - [ ] Sort search results (e.g. lastUpdated)
     - [ ] Support markdown/rich formatting
-    - [x] Introduce a tagging system  
+    - [x] Introduce a tagging system (wip)  
     - [ ] Add dark mode toggle
     - [ ] Implement cloud sync (Firebase)
     - [ ] Cloud account customization
