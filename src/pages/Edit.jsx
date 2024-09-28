@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Textarea, Input, Select, SelectItem } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useNavigate } from 'react-router-dom';
+import GetIcon from "../icons/GetIcon";
 
 function Edit({
     notes,
@@ -48,6 +49,7 @@ function Edit({
                 setSelectedTags([]);
             } else {
                 setSelectedTags(note.tags);
+                console.log("selected tags: ", note.tags);
             }
             setLoaded(true);
         }
@@ -91,11 +93,24 @@ function Edit({
                     selectedKeys={selectedTags}
                     onSelectionChange={handleTagsChange}
                 >
+                    <SelectItem
+                        key={"EditTags"}
+                        value={"EditTags"}
+                        textValue="Edit tags"
+                        variant="faded"
+                        startContent={<GetIcon name="Edit" />}
+                        showDivider
+                        href="/Tags"
+                    >
+                        Edit Tags
+                    </SelectItem>
+
                     {tags.map((tag) => (
                         <SelectItem key={tag.id}>
                             {tag.title}
                         </SelectItem>
                     ))}
+
                 </Select>
             </div>
 

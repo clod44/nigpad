@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavbarComponent from './components/NavbarComponent';
 import Home from './pages/Home.jsx';
 import Edit from './pages/Edit.jsx';
-import StatusBar from './components/StatusBar.jsx';
+import Tags from './pages/Tags.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import { faker } from '@faker-js/faker';
 
@@ -60,6 +60,13 @@ function App() {
         });
     };
     const deleteTag = (id) => {
+        const notesWithTag = notes.filter((note) => note.tags.includes(id));
+        //remove that tag from those notes
+        notesWithTag.forEach((note) => {
+            note.tags = note.tags.filter((tag) => tag !== id);
+            updateNote(note.id, { tags: note.tags });
+        })
+
         setTags((prevTags) => {
             const updatedTags = prevTags.filter((tag) => tag.id !== id);
             localStorage.setItem('tags', JSON.stringify(updatedTags));
@@ -121,13 +128,13 @@ function App() {
 
     useEffect(() => {
         if (tags.length === 0) {
-            generateRandomTags();
+            //generateRandomTags();
         }
         //console.log("tags", tags)
     }, []);
     useEffect(() => {
         if (notes.length === 0) {
-            generateRandomNotes();
+            //generateRandomNotes();
         }
         //console.log("notes", notes)
     }, [notes]);
@@ -139,6 +146,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
                     <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
+                    <Route path="/Tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
                 </Routes>
             </Router>
         </div>

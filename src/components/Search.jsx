@@ -103,6 +103,7 @@ export default function Search({
                             <Spinner size="sm" className="text-2xl text-default-400 flex-shrink-0" />
                         ) : (
                             <>
+                                {/* Filter by tags dropdown*/}
                                 <Dropdown>
                                     <DropdownTrigger>
                                         <Button
@@ -114,13 +115,25 @@ export default function Search({
                                     </DropdownTrigger>
                                     <DropdownMenu
                                         aria-label="Multiple selection example"
-                                        variant="flat"
+                                        variant="solid"
+                                        color="primary"
                                         disallowEmptySelection={false}
                                         closeOnSelect={false}
                                         selectionMode="multiple"
                                         selectedKeys={selectedTags}
                                         onSelectionChange={(e) => handleSelectedTagsChange(e)}
                                     >
+                                        <DropdownItem
+                                            key={"EditTags"}
+                                            value={"EditTags"}
+                                            textValue="Edit tags"
+                                            variant="faded"
+                                            startContent={<GetIcon name="Edit" />}
+                                            showDivider
+                                            href="/Tags"
+                                        >
+                                            <p className="font-bold">Edit Tags</p>
+                                        </DropdownItem>
                                         {tags.map((tag) => (
                                             <DropdownItem key={tag.id} value={tag.id}>
                                                 {tag.title}
@@ -128,8 +141,8 @@ export default function Search({
                                         ))}
                                     </DropdownMenu>
                                 </Dropdown>
+                                {/* Cosmetic Search icon*/}
                                 <GetIcon name="Search" className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-
                             </>
                         )}
 
