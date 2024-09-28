@@ -11,6 +11,7 @@ import { faker } from '@faker-js/faker';
 
 function App() {
 
+
     const [notes, setNotes] = useState(() => {
         const savedNotes = localStorage.getItem('notes');
         return savedNotes ? JSON.parse(savedNotes) : [];
@@ -142,18 +143,20 @@ function App() {
     }, [notes]);
 
     return (
-        <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
-            <Router>
-                <NavbarComponent addNote={addNote} />
-                <Routes>
-                    <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
-                    <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
-                    <Route path="/Tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-                <StatusBar />
-            </Router>
-        </div>
+        <main className={`text-foreground bg-background`}>
+            <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
+                <Router>
+                    <NavbarComponent addNote={addNote} />
+                    <Routes>
+                        <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
+                        <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
+                        <Route path="/Tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                    <StatusBar />
+                </Router>
+            </div>
+        </main>
     );
 }
 
