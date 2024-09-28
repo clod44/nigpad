@@ -10,13 +10,25 @@ function NoteCard({
     tags,
     ...props
 }) {
+    if (!note) {
+        return null;
+    }
+
+    const noteTagTitles = note.tags && note.tags.length > 0 && tags && tags.length > 0
+        ? note.tags.map((noteTagId) => {
+            const foundTag = tags.find(tag => tag.id === noteTagId);
+            return foundTag ? foundTag.title : noteTagId;
+        })
+        : [];
+
+
     return (
         <Card className="bg-background border border-default-100 shadow-lg duration-300" isHoverable
             isFooterBlurred>
             <Divider />
             <CardBody className="min-h-32 max-h-60">
                 <ScrollShadow hideScrollBar className="w-full h-full" size={40}>
-                    <p className="text-foreground-500">{note?.content.substring(0, 600) + (note.content.length > 600 ? '...' : '')}</p>
+                    <p className="text-foreground-500">{note?.content.substring(0, 600) + (note.content?.length > 600 ? '...' : '')}</p>
                 </ScrollShadow>
             </CardBody>
             <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 pe-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
@@ -27,7 +39,9 @@ function NoteCard({
                                 <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={40}>
                                     <p className="text-md text-nowrap">{note.title}</p>
                                     <p className="text-xs text-default-500 text-nowrap col-span-1">{formatTimestamp(note.timestamp)}</p>
-                                    <p className="text-tiny text-foreground-500 text-nowrap">{note.tags?.map(noteTag => tags?.find(tag => tag.id === noteTag).title).join(', ')}</p>
+                                    {(noteTagTitles.length > 0) &&
+                                        <p className="text-tiny text-foreground-500 text-nowrap">{noteTagTitles.join(', ')}</p>
+                                    }
                                 </ScrollShadow>
                             </Link>
                         </div>
@@ -36,7 +50,7 @@ function NoteCard({
                     <NoteCardMore id={note.id} deleteNote={deleteNote} />
                 </div>
             </CardFooter>
-        </Card >
+        </Card>
     );
 }
 

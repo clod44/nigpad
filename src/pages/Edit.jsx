@@ -2,51 +2,75 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Textarea, Input, Select, SelectItem } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
-import { u } from 'framer-motion/client';
+import { useNavigate } from 'react-router-dom';
+import GetIcon from "../icons/GetIcon";
 
 function Edit({
     notes,
     updateNote,
-    currentNote,
-    setCurrentNote,
     tags,
     ...props
 }) {
+    const navigate = useNavigate();
+
     const { id } = useParams();
-    const note = notes.find(note => note.id === id);
+    const [loaded, setLoaded] = useState(false);
+    const [note, setNote] = useState(null);
+
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]);
 
-    //we can't do [note] to also update the titleField and contentField whenever note updates. it creates glitchy ui look with nextui
+    useEffect(() => {
+        setLoaded(false);
+        if (!id) {
+            alert("Note not found");
+            navigate('/');
+            return;
+        }
+        const gettingNote = notes.find(n => n.id === id);
+        if (!gettingNote) {
+            alert("Note not found");
+            navigate('/');
+            return;
+        }
+        setNote(gettingNote);
+
+        setTitle('');
+        setContent('');
+        setSelectedTags([]);
+    }, [id]);
+
     useEffect(() => {
         if (note) {
             setTitle(note.title);
             setContent(note.content);
-            setCurrentNote(note);
+            if (!note.tags) {
+                setSelectedTags([]);
+            } else {
+                setSelectedTags(note.tags);
+                console.log("selected tags: ", note.tags);
+            }
+            setLoaded(true);
         }
-    }, [id]);
-    useEffect(() => {
-        setCurrentNote(note || null);
     }, [note]);
 
 
     useEffect(() => {
-        if (note) {
-            updateNote(id, { title, content });
+        if (loaded && note) {
+            //console.log("saving note: ", note);
+            updateNote(id, { title, content, tags: selectedTags });
+            //console.log("note saved:", note);
         }
-    }, [title, content]);
+    }, [title, content, selectedTags, loaded]);
 
-    const handleTitleChange = (e) => {
-        setTitle(e.target.value);
-    };
 
-    const handleContentChange = (e) => {
-        setContent(e.target.value);
-    };
-    const handleTagsChange = (e) => {
-        const newTags = e.target.value.length > 0 ? e.target.value.split(',') : [];
-        updateNote(id, { tags: newTags });
-    };
+
+    // handlers
+    const handleTitleChange = (e) => setTitle(e.target.value);
+    const handleContentChange = (e) => setContent(e.target.value);
+    const handleTagsChange = (e) => setSelectedTags(Array.from(e));
+
     return (
         <div className="h-full flex flex-col gap-3 p-4 pb-0 overflow-hidden">
             <div className='grid grid-cols-1 sm:grid-cols-4 gap-x-3 gap-y-2'>
@@ -56,27 +80,39 @@ function Edit({
                     placeholder="Title"
                     size="lg"
                     value={title}
-                    className='w-full col-span-3' // Change from col-auto to col-span-3
+                    className='w-full col-span-3'
                     onChange={handleTitleChange}
                 />
                 <Select
                     label="Category"
                     placeholder="School..."
                     selectionMode="multiple"
-                    className="w-full col-span-1" // This can remain as col-span-1
+                    className="w-full col-span-1"
                     variant='flat'
                     size='sm'
-                    defaultSelectedKeys={note?.tags}
-                    onChange={(e) => handleTagsChange(e)}
+                    selectedKeys={selectedTags}
+                    onSelectionChange={handleTagsChange}
                 >
+                    <SelectItem
+                        key={"EditTags"}
+                        value={"EditTags"}
+                        textValue="Edit tags"
+                        variant="faded"
+                        startContent={<GetIcon name="Edit" />}
+                        showDivider
+                        href="/Tags"
+                    >
+                        Edit Tags
+                    </SelectItem>
+
                     {tags.map((tag) => (
                         <SelectItem key={tag.id}>
                             {tag.title}
                         </SelectItem>
                     ))}
+
                 </Select>
             </div>
-
 
             <div className="w-full overflow-y-auto">
                 <ScrollShadow className="w-full h-full" size={40} hideScrollBar>
@@ -91,7 +127,6 @@ function Edit({
                     />
                 </ScrollShadow>
             </div>
-
         </div>
     );
 }
