@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import NavbarComponent from './components/NavbarComponent';
 import Home from './pages/Home.jsx';
 import Edit from './pages/Edit.jsx';
 import Tags from './pages/Tags.jsx';
+import NotFound from './pages/NotFound.jsx';
+import NavbarComponent from './components/NavbarComponent';
 import StatusBar from './components/StatusBar.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import { faker } from '@faker-js/faker';
@@ -148,7 +149,7 @@ function App() {
                     <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
                     <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
                     <Route path="/Tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
-                    {/* TODO: catch 404 route */}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
                 <StatusBar />
             </Router>
