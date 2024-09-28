@@ -8,12 +8,8 @@ function Home({
     deleteNote,
     notes,
     tags,
-    setCurrentNote,
     ...props
 }) {
-    useEffect(() => {
-        setCurrentNote(null);
-    }, [])
     const [filteredNotes, setFilteredNotes] = useState(notes);
 
     return (
@@ -28,7 +24,7 @@ function Home({
                     {filteredNotes.map((note, index) => (
                         note && <NoteCard key={index} note={note} deleteNote={deleteNote} tags={tags} />
                     ))}
-
+                    <Spacer size="lg" />
                 </div>
             </ScrollShadow>
         </div>

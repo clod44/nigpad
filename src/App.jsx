@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { faker } from '@faker-js/faker';
 
 function App() {
-    const [currentNote, setCurrentNote] = useState(null);
 
     const [notes, setNotes] = useState(() => {
         const savedNotes = localStorage.getItem('notes');
@@ -21,15 +20,15 @@ function App() {
     });
 
 
-    const addNote = (title, content) => {
+    const addNote = (title, content, tags = []) => {
         const timestamp = Date.now();
         const newNote = {
             id: uuidv4(),
-            title: title || "",
+            title: title || "Untitled",
             content: content || "",
             timestamp: timestamp,
             lastUpdated: timestamp,
-            categories: [],
+            tags: tags,
         };
         setNotes((prevNotes) => {
             const updatedNotes = [...prevNotes, newNote];
@@ -79,7 +78,6 @@ function App() {
             localStorage.setItem('notes', JSON.stringify(updatedNotes));
             return updatedNotes;
         });
-        setCurrentNote(notes.find((note) => note.id === id));
     };
     const updateTag = (id, title) => {
         setTags((prevTags) => {
@@ -108,62 +106,40 @@ function App() {
         for (let i = 0; i < 5; i++) {
             const title = faker.lorem.words(Math.floor(Math.random() * 3) + 1);
             const content = faker.lorem.paragraphs(Math.floor(Math.random() * 10) + 1);
-            const timestamp = Date.now();
             const newTags = getRandomTags();
 
-            newNotes.push({
-                id: uuidv4(),
-                title,
-                content,
-                tags: newTags,
-                timestamp,
-                lastUpdated: timestamp
-            });
+            addNote(title, content, newTags);
         }
-
-        setNotes((prevNotes) => {
-            const updatedNotes = [...prevNotes, ...newNotes];
-            localStorage.setItem('notes', JSON.stringify(updatedNotes));
-            return updatedNotes;
-        });
     };
 
     const generateRandomTags = () => {
-        const newTags = [];
-        for (let i = 0; i < 5; i++) {
-            const id = uuidv4();
+        for (let i = 0; i < Math.floor(Math.random() * 5) + 1; i++) {
             const title = faker.lorem.words(Math.floor(Math.random() * 3) + 1);
-            newTags.push({ id: uuidv4(), title, timestamp: Date.now() });
+            addTag(title);
         }
-        setTags((prevTags) => {
-            const updatedTags = [...prevTags, ...newTags];
-            localStorage.setItem('tags', JSON.stringify(updatedTags));
-            return updatedTags;
-        });
     };
 
     useEffect(() => {
         if (tags.length === 0) {
             generateRandomTags();
         }
-        console.log("tags", tags)
+        //console.log("tags", tags)
     }, []);
     useEffect(() => {
         if (notes.length === 0) {
             generateRandomNotes();
         }
-        console.log("notes", notes)
+        //console.log("notes", notes)
     }, [notes]);
 
     return (
         <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
             <Router>
-                <NavbarComponent addNote={addNote} currentNote={currentNote} />
+                <NavbarComponent addNote={addNote} />
                 <Routes>
-                    <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} setCurrentNote={setCurrentNote} tags={tags} />} />
-                    <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} setCurrentNote={setCurrentNote} tags={tags} />} />
+                    <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
+                    <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
                 </Routes>
-                <StatusBar currentNote={currentNote} setCurrentNote={setCurrentNote} />
             </Router>
         </div>
     );
