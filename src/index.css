@@ -19,3 +19,66 @@
     display: none;
     /* Hide scrollbar in Chrome, Safari, and Webkit-based browsers */
 }
+
+/* Reset default styles and apply transitions for markdown */
+.markdown {
+    >* {
+        all: revert;
+        transition: color 300ms ease-in-out, filter 300ms ease-in-out;
+
+    }
+
+    h1 {
+        color: theme('colors.primary-500');
+    }
+
+    h2 {
+        color: theme('colors.primary-400');
+    }
+
+    h3 {
+        color: theme('colors.primary-700');
+    }
+
+    ul li::marker {
+        color: theme('colors.primary-500');
+    }
+
+    ol li::marker {
+        color: theme('colors.primary-500');
+    }
+
+    blockquote {
+        color: theme('colors.default-500');
+    }
+
+    img {
+        border-radius: 0.5rem;
+        box-shadow: black 0 0 5px;
+        transition: all 200ms ease-in-out;
+
+        &:hover {
+            filter: brightness(110%);
+        }
+    }
+
+    /* inline */
+    code {
+        background-color: theme('colors.background');
+        color: theme('colors.foreground-800');
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-family: monospace;
+    }
+
+    /* block code */
+    pre {
+        background-color: theme('colors.background');
+        color: theme('colors.foreground-800');
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        font-family: monospace;
+        white-space: pre-wrap;
+    }
+}
