@@ -26,7 +26,7 @@ function NavbarComponent({
                     <NavbarBrand>
                         <div className="flex items-center gap-x-1">
                             <ThemeSwitcher />
-                            <Link href="/">
+                            <Link href="/" className="hover:tracking-widest duration-200 transition-all">
                                 <Button isIconOnly color="primary" variant="faded">
                                     <GetIcon name="Home" />
                                 </Button>
