@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Textarea, Input, Select, SelectItem } from "@nextui-org/react";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
-import { useNavigate } from 'react-router-dom';
+import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow } from "@nextui-org/react";
+import { useNavigate, useParams } from 'react-router-dom';
 import GetIcon from "../icons/GetIcon";
+import ReactMarkdown from 'react-markdown';
 
 function Edit({
     notes,
@@ -20,6 +19,8 @@ function Edit({
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedTags, setSelectedTags] = useState([]);
+
+    const [isEditing, setIsEditing] = useState(true);
 
     useEffect(() => {
         setLoaded(false);
@@ -41,6 +42,7 @@ function Edit({
         setSelectedTags([]);
     }, [id]);
 
+
     useEffect(() => {
         if (note) {
             setTitle(note.title);
@@ -57,12 +59,18 @@ function Edit({
 
 
     useEffect(() => {
-        if (loaded && note) {
+        if (loaded && note && isEditing) {
             //console.log("saving note: ", note);
             updateNote(id, { title, content, tags: selectedTags });
             //console.log("note saved:", note);
         }
     }, [title, content, selectedTags, loaded]);
+
+    useEffect(() => {
+        if (loaded && note) {
+
+        }
+    }, [isEditing]);
 
 
 
@@ -73,60 +81,71 @@ function Edit({
 
     return (
         <div className="h-full flex flex-col gap-3 p-4 pb-0 overflow-hidden">
-            <div className='grid grid-cols-1 sm:grid-cols-4 gap-x-3 gap-y-2'>
+            <div className='grid grid-cols-1 sm:grid-cols-4 sm:gap-x-3 gap-x-0 gap-y-2'>
                 <Input
                     type="text"
                     variant="underlined"
                     placeholder="Title"
                     size="lg"
                     value={title}
-                    className='w-full col-span-3'
+                    className='w-full col-span-2'
                     onChange={handleTitleChange}
                 />
-                <Select
-                    label="Category"
-                    placeholder="School..."
-                    selectionMode="multiple"
-                    className="w-full col-span-1"
-                    variant='flat'
-                    size='sm'
-                    selectedKeys={selectedTags}
-                    onSelectionChange={handleTagsChange}
-                >
-                    <SelectItem
-                        key={"EditTags"}
-                        value={"EditTags"}
-                        textValue="Edit tags"
-                        variant="faded"
-                        startContent={<GetIcon name="Edit" />}
-                        showDivider
-                        href="/Tags"
-                    >
-                        Edit Tags
-                    </SelectItem>
+                <div className='col-span-2 flex flex-nowrap  gap-x-2'>
+                    <Switch size="sm" className='min-w-fit' isSelected={isEditing} onChange={(e) => setIsEditing(e.target.checked)}>Editing</Switch>
 
-                    {tags.map((tag) => (
-                        <SelectItem key={tag.id}>
-                            {tag.title}
-                        </SelectItem>
-                    ))}
+                    <div className='min-w-40 w-full'>
+                        <Select
+                            label="Category"
+                            placeholder="School..."
+                            selectionMode="multiple"
+                            variant='flat'
+                            size='sm'
+                            selectedKeys={selectedTags}
+                            onSelectionChange={handleTagsChange}
+                        >
+                            <SelectItem
+                                key={"EditTags"}
+                                value={"EditTags"}
+                                textValue="Edit tags"
+                                variant="faded"
+                                startContent={<GetIcon name="Edit" />}
+                                showDivider
+                                href="/Tags"
+                            >
+                                Edit Tags
+                            </SelectItem>
 
-                </Select>
+                            {tags.map((tag) => (
+                                <SelectItem key={tag.id}>
+                                    {tag.title}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    </div>
+                </div>
+
             </div>
 
             <div className="w-full overflow-y-auto">
                 <ScrollShadow className="w-full h-full" size={40} hideScrollBar>
-                    <Textarea
-                        variant="bordered"
-                        placeholder="..."
-                        className="w-full"
-                        minRows={30}
-                        maxRows={99999}
-                        value={content}
-                        onChange={handleContentChange}
-                    />
+                    {isEditing ? (
+                        <Textarea
+                            variant="bordered"
+                            placeholder="..."
+                            className="w-full"
+                            minRows={30}
+                            maxRows={99999}
+                            value={content}
+                            onChange={handleContentChange}
+                            readOnly={!isEditing}
+                        />
+                    ) : (
+                        <ReactMarkdown className="markdown">{content}</ReactMarkdown>
+                    )}
                 </ScrollShadow>
             </div>
+
         </div>
     );
 }

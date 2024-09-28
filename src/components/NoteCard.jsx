@@ -1,8 +1,9 @@
 import { formatTimestamp } from "../utils/dateUtils";
-import { Card, CardHeader, CardBody, CardFooter, Divider, Button } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Divider } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { Link } from 'react-router-dom';
 import NoteCardMore from "./NoteCardMore";
+import Markdown from "react-markdown";
 
 function NoteCard({
     deleteNote,
@@ -28,7 +29,9 @@ function NoteCard({
             <Divider />
             <CardBody className="min-h-32 max-h-60">
                 <ScrollShadow hideScrollBar className="w-full h-full" size={40}>
-                    <p className="text-foreground-500">{note?.content.substring(0, 600) + (note.content?.length > 600 ? '...' : '')}</p>
+                    <Markdown className="markdown">
+                        {note?.content.substring(0, 600) + (note.content?.length > 600 ? '...' : '')}
+                    </Markdown>
                 </ScrollShadow>
             </CardBody>
             <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 pe-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">

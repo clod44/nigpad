@@ -14,10 +14,80 @@ Simple Note taking webapp. Uses Browser's storage.
     - [ ] Add folder organization
     - [x] Implement search functionality
     - [ ] Sort search results (e.g. lastUpdated)
-    - [ ] Support markdown/rich formatting
-    - [x] Introduce a tagging system (wip)  
+    - [x] Support markdown/rich formatting
+    - [x] Introduce a tagging system  
     - [ ] Add dark mode toggle
     - [ ] Implement cloud sync (Firebase)
     - [ ] Cloud account customization
     - [ ] Make public notes
     - [ ] Simple NoteCard customization
+
+
+### Markdown test
+
+```
+# Markdown Features Test
+
+## 1. Headings
+
+### H1: This is a heading 1
+### H2: This is a heading 2
+### H3: This is a heading 3
+
+## 2. Emphasis
+
+- **Bold Text**: This text is **bold**.
+- *Italic Text*: This text is *italic*.
+- **_Bold and Italic_**: This text is **_bold and italic_**.
+
+## 3. Lists
+ 
+### Unordered List
+- Item 1
+- Item 2
+  - Subitem 1
+  - Subitem 2
+- Item 3
+
+### Ordered List
+1. First item
+2. Second item
+3. Third item
+
+## 4. Links
+
+[OpenAI](https://www.openai.com)
+
+## 5. Images
+
+![Sample Image](https://via.placeholder.com/150) \
+![Sample Image](https://picsum.photos/200)
+
+## 6. Blockquotes
+
+> This is a blockquote.
+> 
+> It can span multiple lines.
+
+## 7. Code
+
+### Inline Code
+Here is some inline code: `const x = 10;`
+
+# Example Code Block and Inline Code
+
+Here is an example of **inline code**: `const example = 'Hello, World!';`
+
+And below is a block of code:
+
+```javascript
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+
+console.log(greet('Alice'));
+add bottom 3xTilda to the end
+||
+\/
+```
+`"  ```  "`
