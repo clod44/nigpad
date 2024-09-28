@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { formatTimestamp } from '../utils/dateUtils';
 import GetIcon from '../icons/GetIcon';
-import { Button, Popover, PopoverContent, PopoverTrigger, Link } from '@nextui-org/react';
+import { Button, Tooltip } from '@nextui-org/react';
 
 
 function StatusBar({
-    currentNote,
     ...props
 }) {
     const [currentTimestamp, setCurrentTimestamp] = useState(() => Date.now());
@@ -19,51 +18,20 @@ function StatusBar({
     }, []);
 
 
-    const detailsContent = (
-        <PopoverContent className='border border-default-100 overflow-hidden bg-background text-foreground-500' >
-            <div className="px-1 py-2">
-                {currentNote && (
-                    <div className="text-small font-bold text-center">Details</div>
-                )}
-                <div className="text-tiny">
-                    {currentNote && (
-                        <>
-                            <p>Created: {formatTimestamp(currentNote.timestamp)}</p>
-                            <p>Updated: {formatTimestamp(currentNote.lastUpdated)}</p>
-                            <p>Characters: {currentNote.content.length}</p>
-                            <p>Words: {currentNote.content.split(' ').length}</p>
-                            <p>Lines: {currentNote.content.split('\n').length}</p>
-                        </>
-                    )}
-                    <div className='flex flex-row justify-end items-center text-primary gap-1'>
-                        <p className='font-bold'>Autosave enabled</p>
-                        <GetIcon name="Check" color="primary" />
-                    </div>
-
-                </div>
-            </div>
-        </PopoverContent>
-    );
-
     return (
-        <div className="px-4 text-default-500 text-xs flex justify-between flex-nowrap align-middle">
+        <div className="px-4 text-default-500 text-xs flex justify-between flex-nowrap items-center">
 
             <a href="https://github.com/clod44/nigpad" target="_blank" rel="noopener noreferrer">
                 <Button variant='light' color='foreground' size='sm' style={{ height: "1.5rem" }}>
                     <GetIcon name='Code' size={20} />
                 </Button>
             </a>
+            <div className='flex gap-1 flex-nowrap items-center'>
+                <GetIcon name="Info" strokeWidth={1.5} size={20} />
+                {formatTimestamp(currentTimestamp)}
+            </div>
 
-            <Popover >
-                <PopoverTrigger>
-                    <Button variant='light' color='foreground' size='sm' style={{ height: "1.5rem" }}>
-                        <GetIcon name="Info" strokeWidth={1.5} size={20} />
-                        {formatTimestamp(currentTimestamp)}
-                    </Button>
 
-                </PopoverTrigger>
-                {detailsContent}
-            </Popover>
 
         </div >
     );
