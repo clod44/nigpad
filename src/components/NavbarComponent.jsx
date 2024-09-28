@@ -1,6 +1,7 @@
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Link, Tooltip, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, button } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
 import { useState } from "react";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 function NavbarComponent({
     addNote,
@@ -23,12 +24,15 @@ function NavbarComponent({
             <Navbar variant="fixed" className="h-10 pt-4">
                 <NavbarContent>
                     <NavbarBrand>
-                        <Link href="/">
-                            <Button isIconOnly color="primary" variant="faded">
-                                <GetIcon name="Home" />
-                            </Button>
-                            <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
-                        </Link>
+                        <div className="flex items-center gap-x-1">
+                            <ThemeSwitcher />
+                            <Link href="/">
+                                <Button isIconOnly color="primary" variant="faded">
+                                    <GetIcon name="Home" />
+                                </Button>
+                                <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
+                            </Link>
+                        </div>
                     </NavbarBrand>
                 </NavbarContent>
                 <NavbarContent justify="end">
@@ -45,7 +49,7 @@ function NavbarComponent({
                         </Tooltip>
                     </NavbarItem>
                 </NavbarContent>
-            </Navbar>
+            </Navbar >
 
 
             <Modal
