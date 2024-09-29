@@ -1,7 +1,7 @@
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Link, Tooltip } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, Button, Tooltip } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ThemeSwitcher from "./ThemeSwitcher";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -11,6 +11,8 @@ function NavbarComponent({
 }) {
     const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
     const [newNoteId, setNewNoteId] = useState(null);
+    const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
+
     const navigate = useNavigate();
 
     const handleNewNote = () => {
@@ -19,22 +21,54 @@ function NavbarComponent({
         setIsRedirectModalOpen(true);
     };
 
+
+    const hamburgerMenuItems = [
+        "Profile",
+        "Dashboard",
+        "Activity",
+        "Analytics",
+        "System",
+        "Deployments",
+        "My Settings",
+        "Team Settings",
+        "Help & Feedback",
+        "Log Out",
+    ];
+
     return (
         <>
-            <Navbar variant="fixed" className="h-10 pt-4">
-                <NavbarContent>
+            <Navbar
+                isBordered
+                isMenuOpen={isHamburgerMenuOpen}
+                onMenuOpenChange={setIsHamburgerMenuOpen}
+                variant="fixed"
+                className="h-10">
+                {/*Hamburger menu Button */}
+                <NavbarContent className="sm:hidden" justify="start">
+                    <NavbarMenuToggle aria-label={isHamburgerMenuOpen ? "Close menu" : "Open menu"} />
+                </NavbarContent>
+
+
+                <NavbarContent className="sm:hidden pr-3" justify="center">
                     <NavbarBrand>
-                        <div className="flex items-center gap-x-1">
-                            <ThemeSwitcher />
-                            <Link href="/" className="hover:tracking-widest duration-200 transition-all">
-                                <Button isIconOnly color="primary" variant="faded">
-                                    <GetIcon name="Home" />
-                                </Button>
-                                <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
-                            </Link>
-                        </div>
+                        <Link to="/" className="hover:tracking-widest duration-200 transition-all">
+                            <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
+                        </Link>
                     </NavbarBrand>
                 </NavbarContent>
+
+
+                <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                    <NavbarBrand>
+                        <ThemeSwitcher />
+                        <Link to="/" className="hover:tracking-widest duration-200 transition-all flex flex-nowrap items-center text-primary">
+                            <GetIcon name="Home" />
+                            <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
+                        </Link>
+                    </NavbarBrand>
+                </NavbarContent>
+
+
                 <NavbarContent justify="end">
                     <NavbarItem>
                         <Tooltip
@@ -43,7 +77,7 @@ function NavbarComponent({
                             content="New Note"
                             placement="Bottom"
                         >
-                            <Button isIconOnly color="primary" variant="faded" onClick={handleNewNote}>
+                            <Button isIconOnly color="primary" variant="light" onClick={handleNewNote}>
                                 <GetIcon name="NewFile" />
                             </Button>
                         </Tooltip>

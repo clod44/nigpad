@@ -149,6 +149,7 @@ function App() {
                 <Router>
                     <NavbarComponent addNote={addNote} />
                     <Routes>
+                        <Route path="*" element={<NotFound />} />
                         <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
                         <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
                         <Route path="/Tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
