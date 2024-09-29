@@ -6,6 +6,7 @@ import Tags from './pages/Tags.jsx';
 import NotFound from './pages/NotFound.jsx';
 import NavbarComponent from './components/NavbarComponent';
 import StatusBar from './components/StatusBar.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import { faker } from '@faker-js/faker';
 
@@ -156,7 +157,7 @@ function App() {
                     <StatusBar />
                 </Router>
             </div>
-        </main>
+        </main >
     );
 }
 
