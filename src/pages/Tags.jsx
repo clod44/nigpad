@@ -71,7 +71,7 @@ function Tags({
             <Divider className="my-4" />
             <ScrollShadow hideScrollBar className="w-full flex-grow" size={40}>
                 {/* tag list */}
-                <Table removeWrapper isStriped aria-label='tags table' className='px-5'>
+                <Table hideHeader removeWrapper isStriped aria-label='tags table' className='px-5'>
                     <TableHeader>
                         <TableColumn>TITLE</TableColumn>
                         <TableColumn align='end'>ACTION</TableColumn>
