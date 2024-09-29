@@ -48,9 +48,10 @@ function Tags({
     };
 
     const getTagUseAmount = (tagId) => {
-        const amount = notes.filter(note => note.tags.includes(tagId)).length;
+        const amount = notes.filter(note => note.tags && note.tags.includes(tagId)).length;
         return amount;
-    }
+    };
+
 
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">
