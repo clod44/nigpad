@@ -1,86 +1,142 @@
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Link, Tooltip, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, button } from "@nextui-org/react";
+import { Navbar, NavbarMenu, NavbarMenuItem, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, Button, Tooltip, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Avatar } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
 import { useState } from "react";
-import ThemeSwitcher from "./ThemeSwitcher";
+import { useNavigate, Link } from "react-router-dom";
+import ConfirmationModal from "./ConfirmationModal";
+import useDarkMode from '../hooks/useDarkMode';
 
 function NavbarComponent({
     addNote,
-    ...props }
-) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    ...props
+}) {
+    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+    const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
     const [newNoteId, setNewNoteId] = useState(null);
+    const { isDarkMode, toggleDarkMode, currentThemeIconName } = useDarkMode();
 
-    const handleOpenModal = () => {
-        onOpen();
-    }
+    const navigate = useNavigate();
 
     const handleNewNote = () => {
         const newNote = addNote();
         setNewNoteId(newNote.id);
-        handleOpenModal()
+        setIsRedirectModalOpen(true);
     };
+
+
     return (
         <>
-            <Navbar variant="fixed" className="h-10 pt-4">
-                <NavbarContent>
+            <Navbar
+                isBordered
+                variant="fixed"
+                height={"2.5rem"}>
+
+                <NavbarContent className="sm:hidden pr-3" justify="center">
                     <NavbarBrand>
-                        <div className="flex items-center gap-x-1">
-                            <ThemeSwitcher />
-                            <Link href="/" className="hover:tracking-widest duration-200 transition-all">
-                                <Button isIconOnly color="primary" variant="faded">
-                                    <GetIcon name="Home" />
-                                </Button>
-                                <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
-                            </Link>
-                        </div>
+                        <Link to="/" className="hover:tracking-widest duration-200 transition-all">
+                            <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
+                        </Link>
                     </NavbarBrand>
                 </NavbarContent>
-                <NavbarContent justify="end">
-                    <NavbarItem >
+
+
+                <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                    <NavbarBrand>
+                        <Link to="/" className="hover:tracking-widest duration-200 transition-all flex flex-nowrap items-center text-primary">
+                            <GetIcon name="Home" />
+                            <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
+                        </Link>
+                    </NavbarBrand>
+                </NavbarContent>
+
+                <NavbarContent as="div" justify="end">
+
+                    <NavbarItem>
                         <Tooltip
                             className="text-xs"
                             showArrow={true}
                             content="New Note"
                             placement="Bottom"
                         >
-                            <Button isIconOnly color="primary" variant="faded" onClick={handleNewNote}>
+                            <Button isIconOnly color="primary" variant="light" onClick={handleNewNote}>
                                 <GetIcon name="NewFile" />
                             </Button>
                         </Tooltip>
                     </NavbarItem>
+                    <Dropdown placement="bottom-end" className="border border-foreground-300">
+                        <DropdownTrigger>
+                            <Avatar
+                                isBordered
+                                as="button"
+                                className="transition-transform w-6 h-6 text-tiny"
+                                color="primary"
+                                showFallback
+                                src="#"
+                            />
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Profile Actions" variant="flat">
+                            <DropdownItem key="profile" className="h-14 gap-2" showDivider textValue="Profile">
+                                <p className="font-semibold">Guest</p>
+                                <p className="text-foreground-400">No cloud sync</p>
+                            </DropdownItem>
+                            <DropdownItem key="tags" onClick={() => navigate("/tags")}>
+                                My Tags
+                            </DropdownItem>
+                            <DropdownItem
+                                key="toggle-dark-mode"
+                                onClick={toggleDarkMode}
+                                closeOnSelect={false}
+                                endContent={<GetIcon name={currentThemeIconName} />}>
+                                Theme
+                            </DropdownItem>
+                            <DropdownItem key="about" onClick={() => setIsAboutModalOpen(true)}>About</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </NavbarContent>
             </Navbar >
 
-
-            <Modal
-                size={"xs"}
-                isOpen={isOpen}
-                onClose={onClose}
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">New Note has been created.</ModalHeader>
-                            <ModalBody>
-                                <p>Would you like to Edit it now?</p>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                    No
-                                </Button>
-                                <Link href={`/note/${newNoteId}`}>
-                                    <Button color="primary" variant="shadow" onPress={onClose}>
-                                        Edit Now
-                                    </Button>
-                                </Link>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <ConfirmationModal
+                isOpen={isRedirectModalOpen}
+                onClose={() => setIsRedirectModalOpen(false)}
+                title="New Note has been created."
+                message="Would you like to Edit it now?"
+                buttons={[
+                    {
+                        label: "No",
+                        color: "danger",
+                        onPress: () => {
+                            setIsRedirectModalOpen(false);
+                        },
+                        variant: "light",
+                    },
+                    {
+                        label: "Edit Now",
+                        color: "primary",
+                        onPress: () => {
+                            navigate(`/note/${newNoteId}`);
+                            setIsRedirectModalOpen(false);
+                        },
+                        variant: "shadow",
+                    },
+                ]}
+            />
+            <ConfirmationModal
+                isOpen={isAboutModalOpen}
+                onClose={() => setIsRedirectModalOpen(false)}
+                title="NIGPAD - beta"
+                message="Made by clod44 - https://github.com/clod44/nigpad"
+                buttons={[
+                    {
+                        label: "Ok",
+                        color: "primary",
+                        onPress: () => {
+                            setIsAboutModalOpen(false);
+                        },
+                        variant: "light",
+                    }
+                ]}
+            />
         </>
     );
 }
 
 export default NavbarComponent;
-

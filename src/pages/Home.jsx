@@ -2,7 +2,7 @@ import NoteCard from "../components/NoteCard";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import Search from "../components/Search";
 import { Spacer } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function Home({
     deleteNote,
@@ -14,7 +14,7 @@ function Home({
 
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-3 px-6 pt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 px-4 pt-4">
                 <Spacer className="hidden sm:block" />
                 <Search notes={notes} setFilteredNotes={setFilteredNotes} filteredNotes={filteredNotes} tags={tags} />
                 <Spacer className="hidden sm:block" />
