@@ -130,7 +130,7 @@ export default function Search({
                                             variant="faded"
                                             startContent={<GetIcon name="Edit" />}
                                             showDivider
-                                            href="/Tags"
+                                            href="/tags"
                                         >
                                             <p className="font-bold">Edit Tags</p>
                                         </DropdownItem>

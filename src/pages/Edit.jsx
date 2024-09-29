@@ -111,7 +111,7 @@ function Edit({
                                 variant="faded"
                                 startContent={<GetIcon name="Edit" />}
                                 showDivider
-                                href="/Tags"
+                                href="/tags"
                             >
                                 Edit Tags
                             </SelectItem>

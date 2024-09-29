@@ -55,7 +55,7 @@ function Tags({
 
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-3 px-6 pt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 px-4 pt-4">
                 <Spacer className="hidden sm:block" />
                 <div className="flex items-center space-x-2">
                     <Input

@@ -1,9 +1,9 @@
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, Button, Tooltip } from "@nextui-org/react";
+import { Navbar, NavbarMenu, NavbarMenuItem, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, Button, Tooltip, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Avatar } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import ThemeSwitcher from "./ThemeSwitcher";
 import ConfirmationModal from "./ConfirmationModal";
+import useDarkMode from '../hooks/useDarkMode';
 
 function NavbarComponent({
     addNote,
@@ -11,7 +11,7 @@ function NavbarComponent({
 }) {
     const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
     const [newNoteId, setNewNoteId] = useState(null);
-    const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
+    const { isDarkMode, toggleDarkMode, currentThemeIconName } = useDarkMode();
 
     const navigate = useNavigate();
 
@@ -22,32 +22,12 @@ function NavbarComponent({
     };
 
 
-    const hamburgerMenuItems = [
-        "Profile",
-        "Dashboard",
-        "Activity",
-        "Analytics",
-        "System",
-        "Deployments",
-        "My Settings",
-        "Team Settings",
-        "Help & Feedback",
-        "Log Out",
-    ];
-
     return (
         <>
             <Navbar
                 isBordered
-                isMenuOpen={isHamburgerMenuOpen}
-                onMenuOpenChange={setIsHamburgerMenuOpen}
                 variant="fixed"
-                className="h-10">
-                {/*Hamburger menu Button */}
-                <NavbarContent className="sm:hidden" justify="start">
-                    <NavbarMenuToggle aria-label={isHamburgerMenuOpen ? "Close menu" : "Open menu"} />
-                </NavbarContent>
-
+                height={"2.5rem"}>
 
                 <NavbarContent className="sm:hidden pr-3" justify="center">
                     <NavbarBrand>
@@ -60,7 +40,6 @@ function NavbarComponent({
 
                 <NavbarContent className="hidden sm:flex gap-4" justify="center">
                     <NavbarBrand>
-                        <ThemeSwitcher />
                         <Link to="/" className="hover:tracking-widest duration-200 transition-all flex flex-nowrap items-center text-primary">
                             <GetIcon name="Home" />
                             <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
@@ -68,8 +47,8 @@ function NavbarComponent({
                     </NavbarBrand>
                 </NavbarContent>
 
+                <NavbarContent as="div" justify="end">
 
-                <NavbarContent justify="end">
                     <NavbarItem>
                         <Tooltip
                             className="text-xs"
@@ -82,8 +61,40 @@ function NavbarComponent({
                             </Button>
                         </Tooltip>
                     </NavbarItem>
+                    <Dropdown placement="bottom-end" className="border border-foreground-300">
+                        <DropdownTrigger>
+                            <Avatar
+                                isBordered
+                                as="button"
+                                className="transition-transform w-6 h-6 text-tiny"
+                                color="primary"
+                                showFallback
+                                src="#"
+                            />
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Profile Actions" variant="flat">
+                            <DropdownItem key="profile" className="h-14 gap-2" showDivider textValue="Profile">
+                                <p className="font-semibold">Guest</p>
+                                <p className="text-foreground-400">No cloud sync</p>
+                            </DropdownItem>
+                            <DropdownItem key="tags" onClick={() => navigate("/tags")}>
+                                My Tags
+                            </DropdownItem>
+                            <DropdownItem
+                                key="toggle-dark-mode"
+                                onClick={toggleDarkMode}
+                                closeOnSelect={false}
+                                endContent={<GetIcon name={currentThemeIconName} />}>
+                                Theme
+                            </DropdownItem>
+                            <DropdownItem key="about">About</DropdownItem>
+                            <DropdownItem key="logout" color="danger">
+                                Log Out
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </NavbarContent>
-            </Navbar>
+            </Navbar >
 
             <ConfirmationModal
                 isOpen={isRedirectModalOpen}
