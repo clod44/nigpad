@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { Chip, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import GetIcon from '../icons/GetIcon';
 
 function Tags({
@@ -47,6 +47,11 @@ function Tags({
         onDeleteModalClose();
     };
 
+    const getTagUseAmount = (tagId) => {
+        const amount = notes.filter(note => note.tags.includes(tagId)).length;
+        return amount;
+    }
+
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">
             <div className="grid grid-cols-1 sm:grid-cols-3 px-6 pt-5">
@@ -74,8 +79,13 @@ function Tags({
                     <TableBody>
                         {tags.map((tag) => (
                             <TableRow key={tag.id}>
-                                <TableCell>{tag.title}</TableCell>
-                                <TableCell>
+                                <TableCell className='text-nowrap'>
+                                    <Chip size='sm' className='font-mono me-2'>
+                                        {getTagUseAmount(tag.id)}
+                                    </Chip>
+                                    {tag.title}
+                                </TableCell>
+                                <TableCell className='flex justify-end'>
                                     <div className='flex flex-nowrap'>
                                         <Tooltip content="Edit Tag">
                                             <Button size="md" variant='light' onPress={() => handleEditTag(tag.id, tag.title)} isIconOnly>
