@@ -9,6 +9,7 @@ function NavbarComponent({
     addNote,
     ...props
 }) {
+    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
     const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
     const [newNoteId, setNewNoteId] = useState(null);
     const { isDarkMode, toggleDarkMode, currentThemeIconName } = useDarkMode();
@@ -87,10 +88,7 @@ function NavbarComponent({
                                 endContent={<GetIcon name={currentThemeIconName} />}>
                                 Theme
                             </DropdownItem>
-                            <DropdownItem key="about">About</DropdownItem>
-                            <DropdownItem key="logout" color="danger">
-                                Log Out
-                            </DropdownItem>
+                            <DropdownItem key="about" onClick={() => setIsAboutModalOpen(true)}>About</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </NavbarContent>
@@ -119,6 +117,22 @@ function NavbarComponent({
                         },
                         variant: "shadow",
                     },
+                ]}
+            />
+            <ConfirmationModal
+                isOpen={isAboutModalOpen}
+                onClose={() => setIsRedirectModalOpen(false)}
+                title="NIGPAD - beta"
+                message="Made by clod44 - https://github.com/clod44/nigpad"
+                buttons={[
+                    {
+                        label: "Ok",
+                        color: "primary",
+                        onPress: () => {
+                            setIsAboutModalOpen(false);
+                        },
+                        variant: "light",
+                    }
                 ]}
             />
         </>
