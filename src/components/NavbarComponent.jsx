@@ -1,24 +1,24 @@
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Link, Tooltip, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, button } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, Link, Tooltip } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ThemeSwitcher from "./ThemeSwitcher";
+import ConfirmationModal from "./ConfirmationModal";
 
 function NavbarComponent({
     addNote,
-    ...props }
-) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    ...props
+}) {
+    const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
     const [newNoteId, setNewNoteId] = useState(null);
-
-    const handleOpenModal = () => {
-        onOpen();
-    }
+    const navigate = useNavigate();
 
     const handleNewNote = () => {
         const newNote = addNote();
         setNewNoteId(newNote.id);
-        handleOpenModal()
+        setIsRedirectModalOpen(true);
     };
+
     return (
         <>
             <Navbar variant="fixed" className="h-10 pt-4">
@@ -36,7 +36,7 @@ function NavbarComponent({
                     </NavbarBrand>
                 </NavbarContent>
                 <NavbarContent justify="end">
-                    <NavbarItem >
+                    <NavbarItem>
                         <Tooltip
                             className="text-xs"
                             showArrow={true}
@@ -49,38 +49,35 @@ function NavbarComponent({
                         </Tooltip>
                     </NavbarItem>
                 </NavbarContent>
-            </Navbar >
+            </Navbar>
 
-
-            <Modal
-                size={"xs"}
-                isOpen={isOpen}
-                onClose={onClose}
-            >
-                <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">New Note has been created.</ModalHeader>
-                            <ModalBody>
-                                <p>Would you like to Edit it now?</p>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                    No
-                                </Button>
-                                <Link href={`/note/${newNoteId}`}>
-                                    <Button color="primary" variant="shadow" onPress={onClose}>
-                                        Edit Now
-                                    </Button>
-                                </Link>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal>
+            <ConfirmationModal
+                isOpen={isRedirectModalOpen}
+                onClose={() => setIsRedirectModalOpen(false)}
+                title="New Note has been created."
+                message="Would you like to Edit it now?"
+                buttons={[
+                    {
+                        label: "No",
+                        color: "danger",
+                        onPress: () => {
+                            setIsRedirectModalOpen(false);
+                        },
+                        variant: "light",
+                    },
+                    {
+                        label: "Edit Now",
+                        color: "primary",
+                        onPress: () => {
+                            navigate(`/note/${newNoteId}`);
+                            setIsRedirectModalOpen(false);
+                        },
+                        variant: "shadow",
+                    },
+                ]}
+            />
         </>
     );
 }
 
 export default NavbarComponent;
-
