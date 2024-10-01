@@ -4,9 +4,10 @@ import Home from './pages/Home.jsx';
 import Edit from './pages/Edit.jsx';
 import Tags from './pages/Tags.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Profile from './pages/Profile.jsx';
+import Login from './pages/Login.jsx';
 import NavbarComponent from './components/NavbarComponent';
 import StatusBar from './components/StatusBar.jsx';
-import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import { faker } from '@faker-js/faker';
 
@@ -149,10 +150,11 @@ function App() {
                 <Router>
                     <NavbarComponent addNote={addNote} />
                     <Routes>
-                        <Route path="*" element={<NotFound />} />
                         <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
                         <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
                         <Route path="/tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/login" element={<Login />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                     <StatusBar />

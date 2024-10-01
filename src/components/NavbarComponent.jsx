@@ -51,6 +51,16 @@ function NavbarComponent({
                 <NavbarContent as="div" justify="end">
 
                     <NavbarItem>
+                        <Link to="/profile" color="primary" variant="light">
+                            Profile
+                        </Link>
+                    </NavbarItem>
+                    <NavbarItem>
+                        <Link to="/login" color="primary" variant="light">
+                            Login
+                        </Link>
+                    </NavbarItem>
+                    <NavbarItem>
                         <Tooltip
                             className="text-xs"
                             showArrow={true}
