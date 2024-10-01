@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, signInAnonymously } from "firebase/auth";
 import { app } from "../config/firebase.js";
 
 const auth = getAuth(app);
@@ -35,14 +35,20 @@ export const loginWithGoogle = async () => {
 };
 
 export const loginAnonymously = async () => {
+    const auth = getAuth();
+
     try {
-        const result = await signInAnonymously(auth);
-        return result.user;
+        const userCredential = await signInAnonymously(auth);
+        const user = userCredential.user;
+
+        console.log("Anonymous User ID:", user.uid); // Unique ID for the anonymous user
+        return user; // Return user for further use if needed
     } catch (error) {
         console.error("Error logging in anonymously:", error);
-        throw error;
+        throw error; // Propagate the error for handling in the calling function
     }
-}
+};
+
 
 export const logout = async () => {
     try {

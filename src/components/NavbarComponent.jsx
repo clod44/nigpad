@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import useDarkMode from '../hooks/useDarkMode';
-import { getCurrentUser } from "../services/authService";
+import useAuth from "../hooks/useAuth";
 
 function NavbarComponent({
     addNote,
@@ -14,6 +14,8 @@ function NavbarComponent({
     const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
     const [newNoteId, setNewNoteId] = useState(null);
     const { isDarkMode, toggleDarkMode, currentThemeIconName } = useDarkMode();
+
+    const { user, userLoading } = useAuth();
 
     const navigate = useNavigate();
 
@@ -50,17 +52,6 @@ function NavbarComponent({
                 </NavbarContent>
 
                 <NavbarContent as="div" justify="end">
-
-                    <NavbarItem>
-                        <Link to="/profile" color="primary" variant="light">
-                            Profile
-                        </Link>
-                    </NavbarItem>
-                    <NavbarItem>
-                        <Link to="/login" color="primary" variant="light">
-                            Login
-                        </Link>
-                    </NavbarItem>
                     <NavbarItem>
                         <Tooltip
                             className="text-xs"
@@ -79,15 +70,21 @@ function NavbarComponent({
                                 isBordered
                                 as="button"
                                 className="transition-transform w-6 h-6 text-tiny"
-                                color="primary"
+                                color={user ? "primary" : "default"}
                                 showFallback
-                                src="#"
+                                src={user?.photoURL}
                             />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">
                             <DropdownItem key="profile" className="h-14 gap-2" showDivider textValue="Profile" onClick={() => navigate("/profile")}>
-                                <p className="font-semibold">Profile</p>
-                                <p className="text-foreground-400">{getCurrentUser().email}</p>
+                                <p className="font-semibold">
+                                    {user?.isAnonymous && "Anonymous"}
+                                    {!user?.isAnonymous && (user?.displayName || "Profile")}
+                                </p>
+                                <p className="text-foreground-400">
+                                    {user?.isAnonymous && "No Email"}
+                                    {!user?.isAnonymous && (user?.email || "Not logged in")}
+                                </p>
                             </DropdownItem>
                             <DropdownItem key="tags" onClick={() => navigate("/tags")}>
                                 My Tags
