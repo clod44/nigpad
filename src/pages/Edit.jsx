@@ -90,6 +90,7 @@ function Edit({
                     value={title}
                     className='w-full col-span-2'
                     onChange={handleTitleChange}
+                    readOnly={!isEditing}
                 />
                 <div className='col-span-2 flex flex-nowrap  gap-x-2'>
                     <Switch size="sm" className='min-w-fit' isSelected={isEditing} onChange={(e) => setIsEditing(e.target.checked)}>Editing</Switch>
