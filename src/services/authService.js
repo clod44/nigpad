@@ -4,7 +4,7 @@ import { app } from "../config/firebase.js";
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-export const signUpWithEmail = async (email, password) => {
+export const registerWithEmail = async (email, password) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         return userCredential.user;
@@ -33,6 +33,16 @@ export const loginWithGoogle = async () => {
         throw error;
     }
 };
+
+export const loginAnonymously = async () => {
+    try {
+        const result = await signInAnonymously(auth);
+        return result.user;
+    } catch (error) {
+        console.error("Error logging in anonymously:", error);
+        throw error;
+    }
+}
 
 export const logout = async () => {
     try {

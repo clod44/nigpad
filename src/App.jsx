@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import AuthListener from './components/AuthListener.jsx';
 import Home from './pages/Home.jsx';
 import Edit from './pages/Edit.jsx';
 import Tags from './pages/Tags.jsx';
 import NotFound from './pages/NotFound.jsx';
 import Profile from './pages/Profile.jsx';
 import Login from './pages/Login.jsx';
+
 import NavbarComponent from './components/NavbarComponent';
 import StatusBar from './components/StatusBar.jsx';
+
 import { v4 as uuidv4 } from 'uuid';
 import { faker } from '@faker-js/faker';
 
@@ -148,16 +152,18 @@ function App() {
         <main className={`text-foreground bg-background`}>
             <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
                 <Router>
-                    <NavbarComponent addNote={addNote} />
-                    <Routes>
-                        <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
-                        <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
-                        <Route path="/tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                    <StatusBar />
+                    <AuthListener>
+                        <NavbarComponent addNote={addNote} />
+                        <Routes>
+                            <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
+                            <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
+                            <Route path="/tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="*" element={<NotFound />} />
+                        </Routes>
+                        <StatusBar />
+                    </AuthListener>
                 </Router>
             </div>
         </main >

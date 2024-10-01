@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import useDarkMode from '../hooks/useDarkMode';
+import { getCurrentUser } from "../services/authService";
 
 function NavbarComponent({
     addNote,
@@ -84,9 +85,9 @@ function NavbarComponent({
                             />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">
-                            <DropdownItem key="profile" className="h-14 gap-2" showDivider textValue="Profile">
-                                <p className="font-semibold">Guest</p>
-                                <p className="text-foreground-400">No cloud sync</p>
+                            <DropdownItem key="profile" className="h-14 gap-2" showDivider textValue="Profile" onClick={() => navigate("/profile")}>
+                                <p className="font-semibold">Profile</p>
+                                <p className="text-foreground-400">{getCurrentUser().email}</p>
                             </DropdownItem>
                             <DropdownItem key="tags" onClick={() => navigate("/tags")}>
                                 My Tags
