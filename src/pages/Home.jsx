@@ -3,6 +3,7 @@ import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import Search from "../components/Search";
 import { Spacer } from "@nextui-org/react";
 import { useState } from "react";
+import { createNote, updateNote, deleteNote, getNoteById, getAllNotes } from '../services/noteService';
 
 function Home({
     deleteNote,
@@ -11,6 +12,7 @@ function Home({
     ...props
 }) {
     const [filteredNotes, setFilteredNotes] = useState(notes);
+
 
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">

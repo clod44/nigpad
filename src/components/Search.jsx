@@ -134,7 +134,7 @@ export default function Search({
                                         >
                                             <p className="font-bold">Edit Tags</p>
                                         </DropdownItem>
-                                        {tags.map((tag) => (
+                                        {tags?.map((tag) => (
                                             <DropdownItem key={tag.id} value={tag.id}>
                                                 {tag.title}
                                             </DropdownItem>

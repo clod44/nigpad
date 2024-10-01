@@ -13,40 +13,51 @@ import NavbarComponent from './components/NavbarComponent';
 import StatusBar from './components/StatusBar.jsx';
 
 import { v4 as uuidv4 } from 'uuid';
-import { faker } from '@faker-js/faker';
+
+import { createNote, updateNote, deleteNote, getNoteById, getAllNotes } from './services/noteService';
+import useAuth from './hooks/useAuth';
 
 function App() {
 
+    const [notes, setNotes] = useState([]);
+    const { user, userLoading } = useAuth();
 
-    const [notes, setNotes] = useState(() => {
-        const savedNotes = localStorage.getItem('notes');
-        return savedNotes ? JSON.parse(savedNotes) : [];
-    });
+    const updateNotes = async () => {
+        if (!user) return;
+        const _notes = await getAllNotes(user.uid);
+        setNotes(_notes || []);
+    }
+    useEffect(() => {
+        async function fetchData() {
+            await updateNotes();
+        }
+        fetchData();
+    }, [user, userLoading]);
 
+
+    const addNote = async () => {
+        console.log(user)
+        const noteId = createNote({ userId: user.uid });
+        await updateNotes();
+        return noteId;
+    };
+    const deleteNote = (id) => {
+        deleteNote(id);
+        updateNotes();
+    };
+    const updateNote = (id, data) => {
+        updateNote(id, data);
+        updateNotes();
+    };
+
+    //TODO:cloud-sync tags
     const [tags, setTags] = useState(() => {
+        return;
         const savedTags = localStorage.getItem('tags');
         return savedTags ? JSON.parse(savedTags) : [];
     });
-
-
-    const addNote = (title, content, tags = []) => {
-        const timestamp = Date.now();
-        const newNote = {
-            id: uuidv4(),
-            title: title || "Untitled",
-            content: content || "",
-            timestamp: timestamp,
-            lastUpdated: timestamp,
-            tags: tags,
-        };
-        setNotes((prevNotes) => {
-            const updatedNotes = [...prevNotes, newNote];
-            localStorage.setItem('notes', JSON.stringify(updatedNotes));
-            return updatedNotes;
-        });
-        return newNote;
-    };
     const addTag = (title) => {
+        return;
         const timestamp = Date.now();
         const newTag = {
             id: uuidv4(),
@@ -60,15 +71,8 @@ function App() {
         });
         return newTag;
     };
-
-    const deleteNote = (id) => {
-        setNotes((prevNotes) => {
-            const updatedNotes = prevNotes.filter((note) => note.id !== id);
-            localStorage.setItem('notes', JSON.stringify(updatedNotes));
-            return updatedNotes;
-        });
-    };
     const deleteTag = (id) => {
+        return;
         const notesWithTag = notes.filter((note) => note.tags.includes(id));
         //remove that tag from those notes
         notesWithTag.forEach((note) => {
@@ -82,20 +86,8 @@ function App() {
             return updatedTags;
         });
     };
-
-    const updateNote = (id, data) => {
-        setNotes((prevNotes) => {
-            const updatedNotes = prevNotes.map((note) => {
-                if (note.id === id) {
-                    return { ...note, ...data, lastUpdated: Date.now() };
-                }
-                return note;
-            });
-            localStorage.setItem('notes', JSON.stringify(updatedNotes));
-            return updatedNotes;
-        });
-    };
     const updateTag = (id, title) => {
+        return;
         setTags((prevTags) => {
             const updatedTags = prevTags.map((tag) => {
                 if (tag.id === id) {
@@ -107,46 +99,6 @@ function App() {
             return updatedTags;
         });
     };
-    const generateRandomNotes = () => {
-        const getRandomTags = () => {
-            const selectedTags = [];
-            for (let i = 0; i < tags.length; i++) {
-                if (Math.random() < 0.3) {
-                    selectedTags.push(tags[i].id);
-                }
-            }
-            return selectedTags;
-        };
-
-        const newNotes = [];
-        for (let i = 0; i < 5; i++) {
-            const title = faker.lorem.words(Math.floor(Math.random() * 3) + 1);
-            const content = faker.lorem.paragraphs(Math.floor(Math.random() * 10) + 1);
-            const newTags = getRandomTags();
-
-            addNote(title, content, newTags);
-        }
-    };
-
-    const generateRandomTags = () => {
-        for (let i = 0; i < Math.floor(Math.random() * 5) + 1; i++) {
-            const title = faker.lorem.words(Math.floor(Math.random() * 3) + 1);
-            addTag(title);
-        }
-    };
-
-    useEffect(() => {
-        if (tags.length === 0) {
-            //generateRandomTags();
-        }
-        //console.log("tags", tags)
-    }, []);
-    useEffect(() => {
-        if (notes.length === 0) {
-            //generateRandomNotes();
-        }
-        //console.log("notes", notes)
-    }, [notes]);
 
     return (
         <main className={`text-foreground bg-background`}>
@@ -155,7 +107,7 @@ function App() {
                     <AuthListener>
                         <NavbarComponent addNote={addNote} />
                         <Routes>
-                            <Route path="/" element={<Home notes={notes} deleteNote={deleteNote} tags={tags} />} />
+                            <Route path="/" element={<Home notes={notes} updateNote={updateNote} deleteNote={deleteNote} />} />
                             <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
                             <Route path="/tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
                             <Route path="/profile" element={<Profile />} />

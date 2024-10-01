@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../config/firebase.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const AuthListener = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const auth = getAuth();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {

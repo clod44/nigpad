@@ -1,7 +1,6 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, signInAnonymously } from "firebase/auth";
-import { app } from "../config/firebase.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, signInAnonymously } from "firebase/auth";
+import { auth } from "../config/firebase.js";
 
-const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 export const registerWithEmail = async (email, password) => {
@@ -35,20 +34,17 @@ export const loginWithGoogle = async () => {
 };
 
 export const loginAnonymously = async () => {
-    const auth = getAuth();
-
     try {
         const userCredential = await signInAnonymously(auth);
         const user = userCredential.user;
 
-        console.log("Anonymous User ID:", user.uid); // Unique ID for the anonymous user
-        return user; // Return user for further use if needed
+        console.log("Anonymous User ID:", user.uid);
+        return user;
     } catch (error) {
         console.error("Error logging in anonymously:", error);
-        throw error; // Propagate the error for handling in the calling function
+        throw error;
     }
 };
-
 
 export const logout = async () => {
     try {
@@ -57,8 +53,4 @@ export const logout = async () => {
         console.error("Error logging out:", error);
         throw error;
     }
-};
-
-export const getCurrentUser = () => {
-    return auth.currentUser;
 };
