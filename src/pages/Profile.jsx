@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { getAuth, signOut } from 'firebase/auth';
-import { Divider, Tabs, Tab, Avatar, Button, Card, CardBody, CardFooter, } from '@nextui-org/react';
+import { Divider, Tabs, Tab, Avatar, Button, Card, CardBody, CardFooter, Input } from '@nextui-org/react';
+import { updateDisplayName } from '../services/userService';
 
 export default function Profile() {
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [user, setUser] = useState(null);
     const auth = getAuth();
+    const [name, setName] = useState('');
 
 
     useEffect(() => {
@@ -18,6 +20,7 @@ export default function Profile() {
     useEffect(() => {
         if (user) {
             setIsAnonymous(user.isAnonymous);
+            setName(user.displayName || 'Not Set');
         }
     }, [user]);
 
@@ -31,6 +34,17 @@ export default function Profile() {
         }
     };
 
+    const handleSaveProfileChanges = async () => {
+        if (!name || name?.trim().length === 0) {
+            alert("Please enter a valid new name");
+        }
+        try {
+            await updateDisplayName(name);
+            console.log("Profile updated successfully");
+        } catch (error) {
+            console.error("Error updating profile: ", error);
+        }
+    }
     return (
         <>
             {isAnonymous && (
@@ -46,9 +60,10 @@ export default function Profile() {
                             <CardBody>
                                 <div className='p-4 flex gap-5 items-center flex-wrap justify-center mb-4'>
                                     <Avatar src={user?.photoURL} className="w-40 h-40 text-large" isBordered color='primary' />
-                                    <div className='flex-grow'>
-                                        <p><strong>Name:</strong> {user?.displayName || 'Not set'}</p>
-                                        <p><strong>Email:</strong> {user?.email}</p>
+                                    <div className='flex-grow flex flex-col gap-3'>
+                                        <Input type="text" label="Name" variant='underlined' value={name} onChange={(e) => setName(e.target.value)} />
+                                        <Input type="email" label="Email" variant='underlined' value={user?.email} readOnly />
+                                        <Button onClick={handleSaveProfileChanges} size='sm' variant='light' color='primary'>Save Changes</Button>
                                     </div>
                                 </div>
                             </CardBody>
