@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { debounce } from 'lodash';
 import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import GetIcon from "../icons/GetIcon";
@@ -58,19 +59,25 @@ function Edit({
     }, [note]);
 
 
+    const debouncedHandleUpdateNote = useCallback(
+        debounce((id, data) => {
+            handleUpdateNote(id, data);
+        }, 400),
+        [handleUpdateNote]
+    );
+
     useEffect(() => {
         if (loaded && note && isEditing) {
-            //console.log("saving note: ", note);
-            handleUpdateNote(id, { title, content, tags: selectedTags });
-            //console.log("note saved:", note);
+            debouncedHandleUpdateNote(id, { title, content, tags: selectedTags });
         }
-    }, [title, content, selectedTags, loaded]);
 
+    }, [title, content, selectedTags, loaded, isEditing]);
     useEffect(() => {
-        if (loaded && note) {
+        return () => {
+            debouncedHandleUpdateNote.cancel();
+        };
+    }, [debouncedHandleUpdateNote]);
 
-        }
-    }, [isEditing]);
 
 
 
@@ -104,6 +111,7 @@ function Edit({
                             size='sm'
                             selectedKeys={selectedTags}
                             onSelectionChange={handleTagsChange}
+                            readOnly={!isEditing}
                         >
                             <SelectItem
                                 key={"EditTags"}
