@@ -19,11 +19,12 @@ function NavbarComponent({
 
     const navigate = useNavigate();
 
-    const handleNewNote = () => {
-        const newNote = handleCreateNote();
-        setNewNoteId(newNote.id);
+    const handleNewNote = async () => {
+        const newNoteId = await handleCreateNote();
+        setNewNoteId(newNoteId);
         setIsRedirectModalOpen(true);
     };
+
 
 
     return (
@@ -129,7 +130,7 @@ function NavbarComponent({
             />
             <ConfirmationModal
                 isOpen={isAboutModalOpen}
-                onClose={() => setIsRedirectModalOpen(false)}
+                onClose={() => setIsAboutModalOpen(false)}
                 title="NIGPAD - beta"
                 message="Made by clod44 - https://github.com/clod44/nigpad"
                 buttons={[
