@@ -4,6 +4,7 @@ import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow } from "@next
 import { useNavigate, useParams } from 'react-router-dom';
 import GetIcon from "../icons/GetIcon";
 import ReactMarkdown from 'react-markdown';
+import { getNoteById } from '../services/noteService';
 
 function Edit({
     notes,
@@ -12,52 +13,46 @@ function Edit({
     ...props
 }) {
     const navigate = useNavigate();
-
     const { id } = useParams();
     const [loaded, setLoaded] = useState(false);
     const [note, setNote] = useState(null);
-
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedTags, setSelectedTags] = useState([]);
-
     const [isEditing, setIsEditing] = useState(true);
 
+    const acquireNoteData = async (noteId) => {
+        const gettingNote = notes?.find(n => n.id === noteId);
+        if (gettingNote) return gettingNote;
+        return await getNoteById(noteId);
+    };
+
     useEffect(() => {
-        setLoaded(false);
-        if (!id) {
-            alert("Note not found");
-            navigate('/');
-            return;
-        }
-        const gettingNote = notes.find(n => n.id === id);
-        if (!gettingNote) {
-            alert("Note not found");
-            navigate('/');
-            return;
-        }
-        setNote(gettingNote);
-
-        setTitle('');
-        setContent('');
-        setSelectedTags([]);
+        const fetchNoteData = async () => {
+            if (!id) {
+                alert("Note not found");
+                navigate('/');
+                return;
+            }
+            const gettingNote = await acquireNoteData(id);
+            if (!gettingNote) {
+                alert("Note not found");
+                navigate('/');
+                return;
+            }
+            setNote(gettingNote);
+        };
+        fetchNoteData();
     }, [id]);
-
 
     useEffect(() => {
         if (note) {
             setTitle(note.title);
             setContent(note.content);
-            if (!note.tags) {
-                setSelectedTags([]);
-            } else {
-                setSelectedTags(note.tags);
-                console.log("selected tags: ", note.tags);
-            }
+            setSelectedTags(note.tags || []);
             setLoaded(true);
         }
     }, [note]);
-
 
     const debouncedHandleUpdateNote = useCallback(
         debounce((id, data) => {
@@ -70,16 +65,13 @@ function Edit({
         if (loaded && note && isEditing) {
             debouncedHandleUpdateNote(id, { title, content, tags: selectedTags });
         }
-
     }, [title, content, selectedTags, loaded, isEditing]);
+
     useEffect(() => {
         return () => {
             debouncedHandleUpdateNote.cancel();
         };
     }, [debouncedHandleUpdateNote]);
-
-
-
 
     // handlers
     const handleTitleChange = (e) => setTitle(e.target.value);
@@ -101,7 +93,6 @@ function Edit({
                 />
                 <div className='col-span-2 flex flex-nowrap gap-x-2'>
                     <Switch size="sm" className='min-w-fit' isSelected={isEditing} onChange={(e) => setIsEditing(e.target.checked)}>Editing</Switch>
-
                     <div className='min-w-40 w-full'>
                         <Select
                             label="Category"
@@ -124,7 +115,6 @@ function Edit({
                             >
                                 Edit Tags
                             </SelectItem>
-
                             {tags?.map((tag) => (
                                 <SelectItem key={tag.id}>
                                     {tag.title}
@@ -133,7 +123,6 @@ function Edit({
                         </Select>
                     </div>
                 </div>
-
             </div>
 
             <div className="w-full overflow-y-auto">
@@ -154,7 +143,6 @@ function Edit({
                     )}
                 </ScrollShadow>
             </div>
-
         </div>
     );
 }
