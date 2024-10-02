@@ -18,7 +18,6 @@ import { createNote, updateNote, deleteNote, getNoteById, getAllNotes } from './
 import useAuth from './hooks/useAuth';
 
 function App() {
-
     const [notes, setNotes] = useState([]);
     const { user, userLoading } = useAuth();
 
@@ -35,20 +34,22 @@ function App() {
     }, [user, userLoading]);
 
 
-    const addNote = async () => {
-        console.log(user)
-        const noteId = createNote({ userId: user.uid });
+    const handleCreateNote = async () => {
+        const noteId = await createNote(user.uid);
         await updateNotes();
         return noteId;
     };
-    const deleteNote = (id) => {
-        deleteNote(id);
-        updateNotes();
+
+    const handleUpdateNote = async (id, data) => {
+        await updateNote(id, data);
+        await updateNotes();
     };
-    const updateNote = (id, data) => {
-        updateNote(id, data);
-        updateNotes();
+
+    const handleDeleteNote = async (id) => {
+        await deleteNote(id);
+        await updateNotes();
     };
+
 
     //TODO:cloud-sync tags
     const [tags, setTags] = useState(() => {
@@ -56,7 +57,7 @@ function App() {
         const savedTags = localStorage.getItem('tags');
         return savedTags ? JSON.parse(savedTags) : [];
     });
-    const addTag = (title) => {
+    const handleCreateTag = (title) => {
         return;
         const timestamp = Date.now();
         const newTag = {
@@ -71,7 +72,7 @@ function App() {
         });
         return newTag;
     };
-    const deleteTag = (id) => {
+    const handleDeleteTag = (id) => {
         return;
         const notesWithTag = notes.filter((note) => note.tags.includes(id));
         //remove that tag from those notes
@@ -86,7 +87,7 @@ function App() {
             return updatedTags;
         });
     };
-    const updateTag = (id, title) => {
+    const handleUpdateTag = (id, title) => {
         return;
         setTags((prevTags) => {
             const updatedTags = prevTags.map((tag) => {
@@ -105,11 +106,11 @@ function App() {
             <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
                 <Router>
                     <AuthListener>
-                        <NavbarComponent addNote={addNote} />
+                        <NavbarComponent handleCreateNote={handleCreateNote} />
                         <Routes>
-                            <Route path="/" element={<Home notes={notes} updateNote={updateNote} deleteNote={deleteNote} />} />
-                            <Route path="/note/:id" element={<Edit notes={notes} updateNote={updateNote} tags={tags} />} />
-                            <Route path="/tags" element={<Tags notes={notes} tags={tags} addTag={addTag} updateTag={updateTag} deleteTag={deleteTag} />} />
+                            <Route path="/" element={<Home notes={notes} handleUpdateNote={handleUpdateNote} handleDeleteNote={handleDeleteNote} />} />
+                            <Route path="/note/:id" element={<Edit notes={notes} handleUpdateNote={handleUpdateNote} tags={tags} />} />
+                            <Route path="/tags" element={<Tags notes={notes} tags={tags} handleCreateNote={handleCreateNote} handleUpdateTag={handleUpdateTag} handleDeleteTag={handleDeleteNote} />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="*" element={<NotFound />} />

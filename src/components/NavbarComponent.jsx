@@ -7,7 +7,7 @@ import useDarkMode from '../hooks/useDarkMode';
 import useAuth from "../hooks/useAuth";
 
 function NavbarComponent({
-    addNote,
+    handleCreateNote,
     ...props
 }) {
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
@@ -20,7 +20,7 @@ function NavbarComponent({
     const navigate = useNavigate();
 
     const handleNewNote = () => {
-        const newNote = addNote();
+        const newNote = handleCreateNote();
         setNewNoteId(newNote.id);
         setIsRedirectModalOpen(true);
     };

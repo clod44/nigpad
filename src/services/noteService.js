@@ -6,7 +6,7 @@ const createNote = async (userId) => {
     const noteData = {
         title: "Untitled",
         content: "",
-        createdAt: now,
+        created: now,
         lastSynced: now,
         lastUpdated: now,
         userId: userId,
@@ -53,8 +53,8 @@ const deleteNote = async (id) => {
         console.error('Error deleting note:', error);
     }
 };
-
 const getAllNotes = async (userId) => {
+    console.log('Retrieving all notes for user:', userId);
     const notesCollection = collection(db, 'notes');
     const q = query(notesCollection, where('userId', '==', userId));
 
@@ -67,6 +67,7 @@ const getAllNotes = async (userId) => {
         console.error('Error retrieving notes:', error);
     }
 };
+
 
 const getNoteById = async (id) => {
     const noteRef = doc(db, 'notes', id);

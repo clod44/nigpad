@@ -4,7 +4,7 @@ import GetIcon from "../icons/GetIcon";
 import { useNavigate } from 'react-router-dom';
 
 function NoteCardMore({
-    deleteNote,
+    handleDeleteNote,
     id, //ntoe id
     ...props
 }) {
@@ -13,7 +13,7 @@ function NoteCardMore({
         navigate(`/note/${id}`);
     };
     const handleClickDelete = () => {
-        deleteNote(id)
+        handleDeleteNote(id)
         navigate(`/`);
     }
 

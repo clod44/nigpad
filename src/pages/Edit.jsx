@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 
 function Edit({
     notes,
-    updateNote,
+    handleUpdateNote,
     tags,
     ...props
 }) {
@@ -61,7 +61,7 @@ function Edit({
     useEffect(() => {
         if (loaded && note && isEditing) {
             //console.log("saving note: ", note);
-            updateNote(id, { title, content, tags: selectedTags });
+            handleUpdateNote(id, { title, content, tags: selectedTags });
             //console.log("note saved:", note);
         }
     }, [title, content, selectedTags, loaded]);
@@ -117,7 +117,7 @@ function Edit({
                                 Edit Tags
                             </SelectItem>
 
-                            {tags.map((tag) => (
+                            {tags?.map((tag) => (
                                 <SelectItem key={tag.id}>
                                     {tag.title}
                                 </SelectItem>
