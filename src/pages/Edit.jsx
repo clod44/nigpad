@@ -32,6 +32,7 @@ function Edit({
         //the note editing wont work due to permissions but we also disable the ui.
         setCanEdit(false);
         setIsEditing(false);
+        alert("You are viewing a stranger's public note.");
         return await getNoteById(noteId);
     };
 
