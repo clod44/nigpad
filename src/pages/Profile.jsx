@@ -62,7 +62,7 @@ export default function Profile() {
                                     <Avatar src={user?.photoURL} className="w-40 h-40 text-large" isBordered color='primary' />
                                     <div className='flex-grow flex flex-col gap-3'>
                                         <Input type="text" label="Name" variant='underlined' value={name} onChange={(e) => setName(e.target.value)} />
-                                        <Input type="email" label="Email" variant='underlined' value={user?.email} readOnly />
+                                        <Input type="email" label="Email" variant='underlined' value={user?.email || 'No Email'} readOnly />
                                         <Button onClick={handleSaveProfileChanges} size='sm' variant='light' color='primary'>Save Changes</Button>
                                     </div>
                                 </div>

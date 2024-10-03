@@ -5,6 +5,10 @@ const db = getFirestore();
 //prevents altering other people's notes. only allow reading if public=true
 
 const createNote = async (userId) => {
+    if (!userId) {
+        console.error('No user ID provided');
+        return;
+    }
     const now = Timestamp.now();
     const noteData = {
         title: "Untitled",
@@ -59,6 +63,10 @@ const deleteNote = async (id) => {
     }
 };
 const getAllNotes = async (userId) => {
+    if (!userId) {
+        console.error('No user ID provided');
+        return;
+    }
     console.log('Retrieving all notes for user:', userId);
     const notesCollection = collection(db, 'notes');
     const q = query(notesCollection, where('userId', '==', userId));
@@ -85,7 +93,7 @@ const getNoteById = async (id) => {
             return noteData;
         } else {
             console.log('No such note exists!');
-            return null;
+            return;
         }
     } catch (error) {
         console.error('Error retrieving note:', error);

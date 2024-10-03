@@ -23,7 +23,7 @@ function App() {
 
     const updateNotes = async () => {
         if (!user) return;
-        const _notes = await getAllNotes(user.uid);
+        const _notes = await getAllNotes(user?.uid);
         setNotes(_notes || []);
     }
     useEffect(() => {
@@ -35,7 +35,7 @@ function App() {
 
 
     const handleCreateNote = async () => {
-        const noteId = await createNote(user.uid);
+        const noteId = await createNote(user?.uid);
         await updateNotes();
         return noteId;
     };

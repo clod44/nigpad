@@ -21,6 +21,10 @@ function NavbarComponent({
 
     const handleNewNote = async () => {
         const newNoteId = await handleCreateNote();
+        if (!newNoteId) {
+            alert("Failed to create new note. are you logged in?");
+            return;
+        }
         setNewNoteId(newNoteId);
         setIsRedirectModalOpen(true);
     };
