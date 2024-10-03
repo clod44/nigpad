@@ -29,7 +29,7 @@ function Edit({
         setCanEdit(true);
         if (gettingNote) return gettingNote;
         //the note wasnt found in user's notes. we will try to get it from the server.
-        //the note editing wont work but we should also disable the ui.
+        //the note editing wont work due to permissions but we also disable the ui.
         setCanEdit(false);
         setIsEditing(false);
         return await getNoteById(noteId);
@@ -129,6 +129,7 @@ function Edit({
                             selectedKeys={selectedTags}
                             onSelectionChange={handleTagsChange}
                             readOnly={!(isEditing && canEdit)}
+                            isDisabled={!canEdit}
                         >
                             <SelectItem
                                 key={"EditTags"}
