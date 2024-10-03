@@ -1,5 +1,8 @@
 import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, getDocs, getDoc, query, where, Timestamp } from 'firebase/firestore';
 const db = getFirestore();
+//firebase rules:
+//prevents anybody from creating, updating or deleting any note which is not their
+//prevents altering other people's notes. only allow reading if public=true
 
 const createNote = async (userId) => {
     const now = Timestamp.now();
@@ -10,6 +13,7 @@ const createNote = async (userId) => {
         lastSynced: now,
         lastUpdated: now,
         userId: userId,
+        public: false,
     };
 
     console.log('Creating note:', noteData);
@@ -24,7 +28,7 @@ const createNote = async (userId) => {
 
 const updateNote = async (id, note = {
     title: 'Untitled',
-    content: '',
+    content: ''
 }) => {
     const noteRef = doc(db, 'notes', id);
     const now = Timestamp.now();
@@ -34,6 +38,7 @@ const updateNote = async (id, note = {
         content: note.content,
         lastUpdated: now,
         lastSynced: now,
+        public: note.public
     };
 
     try {

@@ -6,6 +6,7 @@ import GetIcon from "../icons/GetIcon";
 import ReactMarkdown from 'react-markdown';
 import { getNoteById } from '../services/noteService';
 
+//TODO:refactor state management in Edit.jsx. its shitty
 function Edit({
     notes,
     handleUpdateNote,
@@ -19,11 +20,18 @@ function Edit({
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedTags, setSelectedTags] = useState([]);
+    const [canEdit, setCanEdit] = useState(false);
     const [isEditing, setIsEditing] = useState(true);
+    const [isPublic, setIsPublic] = useState(false);
 
     const acquireNoteData = async (noteId) => {
         const gettingNote = notes?.find(n => n.id === noteId);
+        setCanEdit(true);
         if (gettingNote) return gettingNote;
+        //the note wasnt found in user's notes. we will try to get it from the server.
+        //the note editing wont work but we should also disable the ui.
+        setCanEdit(false);
+        setIsEditing(false);
         return await getNoteById(noteId);
     };
 
@@ -51,6 +59,7 @@ function Edit({
             setContent(note.content);
             setSelectedTags(note.tags || []);
             setLoaded(true);
+            setIsPublic(note.public || false);
         }
     }, [note]);
 
@@ -63,9 +72,9 @@ function Edit({
 
     useEffect(() => {
         if (loaded && note && isEditing) {
-            debouncedHandleUpdateNote(id, { title, content, tags: selectedTags });
+            debouncedHandleUpdateNote(id, { title, content, public: isPublic });
         }
-    }, [title, content, selectedTags, loaded, isEditing]);
+    }, [title, content, selectedTags, loaded, isEditing, isPublic]);
 
     useEffect(() => {
         return () => {
@@ -80,7 +89,7 @@ function Edit({
 
     return (
         <div className="h-full flex flex-col gap-3 p-4 pb-0 overflow-hidden">
-            <div className='grid grid-cols-1 sm:grid-cols-4 sm:gap-x-3 gap-x-0 gap-y-2'>
+            <div className='grid grid-cols-1 md:grid-cols-4 sm:gap-x-3 gap-x-0 gap-y-2'>
                 <Input
                     type="text"
                     variant="underlined"
@@ -89,10 +98,27 @@ function Edit({
                     value={title}
                     className='w-full col-span-2'
                     onChange={handleTitleChange}
-                    readOnly={!isEditing}
+                    readOnly={!(isEditing && canEdit)}
                 />
                 <div className='col-span-2 flex flex-nowrap gap-x-2'>
-                    <Switch size="sm" className='min-w-fit' isSelected={isEditing} onChange={(e) => setIsEditing(e.target.checked)}>Editing</Switch>
+                    <Switch
+                        size="sm"
+                        className='min-w-fit'
+                        isSelected={isEditing}
+                        onChange={(e) => setIsEditing(e.target.checked)}
+                        isDisabled={!canEdit}
+                    >
+                        Editing
+                    </Switch>
+                    <Switch
+                        size="sm"
+                        className='min-w-fit'
+                        isSelected={isPublic}
+                        onChange={(e) => setIsPublic(e.target.checked)}
+                        isDisabled={!(canEdit && isEditing)}
+                    >
+                        Public
+                    </Switch>
                     <div className='min-w-40 w-full'>
                         <Select
                             label="Category"
@@ -102,7 +128,7 @@ function Edit({
                             size='sm'
                             selectedKeys={selectedTags}
                             onSelectionChange={handleTagsChange}
-                            readOnly={!isEditing}
+                            readOnly={!(isEditing && canEdit)}
                         >
                             <SelectItem
                                 key={"EditTags"}
