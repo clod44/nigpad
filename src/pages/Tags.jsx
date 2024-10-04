@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Chip, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import GetIcon from '../icons/GetIcon';
+import { NoteContext } from '../context/NoteContext';
 
 function Tags({
-    notes,
-    tags,
-    handleCreateTag,
-    handleUpdateTag,
-    handleDeleteTag,
     ...props
 }) {
+
+    const { tags, handleCreateTag, handleUpdateTag, handleDeleteTag } = useContext(NoteContext);
+
     const [newTag, setNewTag] = useState('');
     const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalClose } = useDisclosure();
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalClose } = useDisclosure();
@@ -48,13 +47,6 @@ function Tags({
     };
 
 
-    const getTagUseAmount = (tagId) => {
-        return 0;
-        const amount = notes.filter(note => note.tags && note.tags.includes(tagId)).length;
-        return amount;
-    };
-
-
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">
             <div className="grid grid-cols-1 sm:grid-cols-3 px-4 pt-4">
@@ -83,9 +75,6 @@ function Tags({
                         {tags.map((tag) => (
                             <TableRow key={tag.id}>
                                 <TableCell className='text-nowrap'>
-                                    <Chip size='sm' className='font-mono me-2'>
-                                        {getTagUseAmount(tag.id)}
-                                    </Chip>
                                     {tag.title}
                                 </TableCell>
                                 <TableCell className='flex justify-end'>
