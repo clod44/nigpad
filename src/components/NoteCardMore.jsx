@@ -28,7 +28,6 @@ function NoteCardMore({
             <DropdownMenu variant="faded">
                 <DropdownItem
                     key="edit"
-                    shortcut="⌘⇧E"
                     startContent={<GetIcon name="Edit" className={iconClasses} />}
                     onClick={handleClickEdit}
                 >
@@ -38,7 +37,6 @@ function NoteCardMore({
                     key="delete"
                     className="text-danger"
                     color="danger"
-                    shortcut="⌘⇧D"
                     startContent={<GetIcon name="Delete" className={cn(iconClasses, "text-danger")} />}
                     onClick={handleClickDelete}
                 >
