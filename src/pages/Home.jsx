@@ -1,16 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Spacer, ScrollShadow } from "@nextui-org/react";
 import NoteCard from "../components/NoteCard";
 import Search from "../components/Search";
+import { NoteContext } from "../context/NoteProvider";
 
-export default function Home({
-    handleDeleteNote,
-    notes,
-    tags,
-    ...props
-}) {
+export default function Home() {
+    const { notes, tags, handleDeleteNote } = useContext(NoteContext);
     const [filteredNotes, setFilteredNotes] = useState(notes);
-    //console.log('Notes:', JSON.stringify(notes, null, 2)); // Pretty-print the notes array
 
     useEffect(() => {
         setFilteredNotes(notes);
@@ -25,7 +21,7 @@ export default function Home({
             </div>
             <ScrollShadow hideScrollBar className="w-full flex-grow" size={40}>
                 <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
-                    {filteredNotes.map((note) => {
+                    {filteredNotes?.map((note) => {
                         return note && (
                             <NoteCard key={note.id} note={note} handleDeleteNote={handleDeleteNote} tags={tags} />
                         );
@@ -33,7 +29,6 @@ export default function Home({
                     <Spacer size="lg" />
                 </div>
             </ScrollShadow>
-
         </div>
     );
 }
