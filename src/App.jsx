@@ -13,7 +13,7 @@ import { NoteProvider } from './context/NoteProvider';
 
 export default function App() {
     return (
-        <main className={`text-foreground bg-background`}>
+        <main className="text-foreground bg-background">
             <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
                 <Router>
                     <AuthListener>
