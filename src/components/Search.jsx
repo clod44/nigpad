@@ -17,6 +17,7 @@ export default function Search({
 
     const debouncedFilterNotes = useCallback(
         debounce(async (term) => {
+            setIsLoading(true);
             let tagsFilteredNotes = notes;
 
             if (selectedTags.length > 0) {
@@ -47,14 +48,9 @@ export default function Search({
         [notes, selectedTags, setFilteredNotes]
     );
 
-    const handleSearchTermUpdate = (e) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-        setIsLoading(true);
-        debouncedFilterNotes(value);
-    };
-
-
+    useEffect(() => {
+        debouncedFilterNotes(searchTerm);
+    }, [selectedTags, searchTerm, debouncedFilterNotes]);
 
     useEffect(() => {
         return () => {
@@ -62,15 +58,18 @@ export default function Search({
         };
     }, [debouncedFilterNotes]);
 
-
-    //TODO:cloudsync tags
-    const handleSelectedTagsChange = (e) => {
-        return;
-        const newTagsArray = Array.from(e);
-        console.log(newTagsArray);
-        setSelectedTags(newTagsArray);
+    const handleSearchTermUpdate = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setIsLoading(true);
+        debouncedFilterNotes(value);
     };
 
+    const handleSelectedTagsChange = (e) => {
+        const newTagsArray = Array.from(e);
+        setSelectedTags(newTagsArray);
+        setIsLoading(true);
+    };
 
     return (
         <div>
@@ -82,9 +81,7 @@ export default function Search({
                 value={searchTerm}
                 onChange={handleSearchTermUpdate}
                 endContent={
-
                     <div className="flex gap-2 flex-nowrap items-center">
-
                         {isLoading ? (
                             <Spinner size="sm" className="text-2xl text-default-400 flex-shrink-0" />
                         ) : (
@@ -106,7 +103,7 @@ export default function Search({
                                         closeOnSelect={false}
                                         selectionMode="multiple"
                                         selectedKeys={selectedTags}
-                                        onSelectionChange={(e) => handleSelectedTagsChange(e)}
+                                        onSelectionChange={handleSelectedTagsChange}
                                     >
                                         <DropdownItem
                                             key={"EditTags"}
@@ -126,15 +123,12 @@ export default function Search({
                                         ))}
                                     </DropdownMenu>
                                 </Dropdown>
-                                {/* Cosmetic Search icon*/}
                                 <GetIcon name="Search" className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                             </>
                         )}
-
                     </div>
                 }
             />
-
-        </div >
+        </div>
     );
 }
