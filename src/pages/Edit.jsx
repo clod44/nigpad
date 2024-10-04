@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import GetIcon from "../icons/GetIcon";
 import ReactMarkdown from 'react-markdown';
 import { getNoteById } from '../services/noteService';
-import { NoteContext } from '../context/NoteProvider';
+import { NoteContext } from '../context/NoteContext';
 
 function Edit({
     ...props

@@ -25,7 +25,9 @@ function NavbarComponent({
         <>
             <Navbar
                 isBordered
-                variant="fixed">
+                variant="fixed"
+                className="shadow"
+            >
 
                 <NavbarContent className="gap-4" justify="center">
                     <NavbarBrand>

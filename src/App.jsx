@@ -9,25 +9,28 @@ import Profile from './pages/Profile.jsx';
 import Login from './pages/Login.jsx';
 import NavbarComponent from './components/NavbarComponent';
 import StatusBar from './components/StatusBar.jsx';
-import { NoteProvider } from './context/NoteProvider';
+import { NoteProvider } from './context/NoteContext.jsx';
+import { SearchProvider } from './context/SearchContext.jsx';
 
 export default function App() {
     return (
-        <main className="text-foreground bg-background">
-            <div className='w-full h-dvh overflow-hidden flex flex-col bg-gradient-to-b from-background to-primary-50'>
+        <main className='text-foreground bg-background'>
+            <div className='w-full h-dvh overflow-hidden flex flex-col from-foreground-300 dark:from-background to-primary-100 dark:to-primary-50 bg-gradient-to-br'>
                 <Router>
                     <AuthListener>
                         <NoteProvider>
-                            <NavbarComponent />
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/note/:id" element={<Edit />} />
-                                <Route path="/tags" element={<Tags />} />
-                                <Route path="/profile" element={<Profile />} />
-                                <Route path="/login" element={<Login />} />
-                                <Route path="*" element={<NotFound />} />
-                            </Routes>
-                            <StatusBar />
+                            <SearchProvider>
+                                <NavbarComponent />
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route path="/note/:id" element={<Edit />} />
+                                    <Route path="/tags" element={<Tags />} />
+                                    <Route path="/profile" element={<Profile />} />
+                                    <Route path="/login" element={<Login />} />
+                                    <Route path="*" element={<NotFound />} />
+                                </Routes>
+                                <StatusBar />
+                            </SearchProvider>
                         </NoteProvider>
                     </AuthListener>
                 </Router>
