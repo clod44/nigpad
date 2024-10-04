@@ -17,9 +17,9 @@ Simple Note taking webapp. Uses Browser's storage.
     - [x] Support markdown/rich formatting
     - [x] Introduce a tagging system  
     - [x] Add dark mode toggle
-    - [ ] Implement cloud sync (Firebase)
-    - [ ] Cloud account customization
-    - [ ] Make public notes
+    - [x] Implement cloud sync (Firebase)
+    - [x] Cloud account customization
+    - [x] Make public notes
     - [ ] Simple NoteCard customization
 
 
