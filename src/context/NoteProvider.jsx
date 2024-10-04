@@ -26,9 +26,13 @@ export const NoteProvider = ({ children }) => {
     }, [user, userLoading]);
 
     // Handlers for notes
+    const [canCreateNote, setCanCreateNote] = useState(true);
     const handleCreateNote = async () => {
+        if (!canCreateNote) return;
+        setCanCreateNote(false);
         const noteId = await createNote(user.uid);
         await updateNotes();
+        setCanCreateNote(true);
         return noteId;
     };
 
