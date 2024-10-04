@@ -1,99 +1,124 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { debounce } from 'lodash';
 import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import GetIcon from "../icons/GetIcon";
 import ReactMarkdown from 'react-markdown';
+import { getNoteById } from '../services/noteService';
 
+//TODO:refactor state management in Edit.jsx. its shitty
 function Edit({
     notes,
-    updateNote,
+    handleUpdateNote,
     tags,
     ...props
 }) {
     const navigate = useNavigate();
-
     const { id } = useParams();
-    const [loaded, setLoaded] = useState(false);
-    const [note, setNote] = useState(null);
+    //they create a update cycle
+    const [serverNote, setServerNote] = useState(null); //note data from the server
+    const [clientNote, setClientNote] = useState(null); //note that is being edited and shown in the UI
 
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [selectedTags, setSelectedTags] = useState([]);
-
+    const [canEdit, setCanEdit] = useState(false);
     const [isEditing, setIsEditing] = useState(true);
 
-    useEffect(() => {
-        setLoaded(false);
-        if (!id) {
-            alert("Note not found");
-            navigate('/');
-            return;
-        }
-        const gettingNote = notes.find(n => n.id === id);
-        if (!gettingNote) {
-            alert("Note not found");
-            navigate('/');
-            return;
-        }
-        setNote(gettingNote);
+    const acquireNoteData = async (noteId) => {
+        const fetchedNote = notes?.find(n => n.id === noteId);
+        setCanEdit(true);
+        if (fetchedNote) return fetchedNote;
+        //the note wasnt found in user's notes. we will try to get it from the server.
+        //the note editing wont work due to permissions but we also disable the ui.
+        setCanEdit(false);
+        setIsEditing(false);
+        alert("You are viewing a stranger's public note.");
+        return await getNoteById(noteId);
+    };
 
-        setTitle('');
-        setContent('');
-        setSelectedTags([]);
+    useEffect(() => {
+        const fetchNoteData = async () => {
+            if (!id) {
+                alert("Note not found");
+                navigate('/');
+                return;
+            }
+            const fetchedNote = await acquireNoteData(id);
+            if (!fetchedNote) {
+                alert("Note not found");
+                navigate('/');
+                return;
+            }
+            setServerNote(fetchedNote);
+        };
+        fetchNoteData();
     }, [id]);
 
+    useEffect(() => {
+        if (serverNote) {
+            //purify the note's tags from old or undefined tags:
+            const validTags = serverNote.tags?.filter(tagId => tags.some(tag => tag.id === tagId)) || [];
+            setClientNote({ ...serverNote, tags: validTags });
+        }
+    }, [serverNote]);
+
+
+    const debouncedHandleUpdateNote = useCallback(
+        debounce((id, data) => {
+            console.log("debouncedHandleUpdateNote", id, data);
+            handleUpdateNote(id, data);
+        }, 400),
+        [handleUpdateNote]
+    );
 
     useEffect(() => {
-        if (note) {
-            setTitle(note.title);
-            setContent(note.content);
-            if (!note.tags) {
-                setSelectedTags([]);
-            } else {
-                setSelectedTags(note.tags);
-                console.log("selected tags: ", note.tags);
-            }
-            setLoaded(true);
+        if (serverNote) {
+            debouncedHandleUpdateNote(id, { ...clientNote });
         }
-    }, [note]);
-
+    }, [clientNote]);
 
     useEffect(() => {
-        if (loaded && note && isEditing) {
-            //console.log("saving note: ", note);
-            updateNote(id, { title, content, tags: selectedTags });
-            //console.log("note saved:", note);
-        }
-    }, [title, content, selectedTags, loaded]);
+        return () => {
+            debouncedHandleUpdateNote.cancel();
+        };
+    }, [debouncedHandleUpdateNote]);
 
-    useEffect(() => {
-        if (loaded && note) {
+    const handleClientDataChange = (data) => {
+        if (!clientNote) return;
+        setClientNote({ ...clientNote, ...data });
+    }
 
-        }
-    }, [isEditing]);
-
-
-
-    // handlers
-    const handleTitleChange = (e) => setTitle(e.target.value);
-    const handleContentChange = (e) => setContent(e.target.value);
-    const handleTagsChange = (e) => setSelectedTags(Array.from(e));
 
     return (
         <div className="h-full flex flex-col gap-3 p-4 pb-0 overflow-hidden">
-            <div className='grid grid-cols-1 sm:grid-cols-4 sm:gap-x-3 gap-x-0 gap-y-2'>
+            <div className='grid grid-cols-1 md:grid-cols-4 sm:gap-x-3 gap-x-0 gap-y-2'>
                 <Input
                     type="text"
                     variant="underlined"
                     placeholder="Title"
                     size="lg"
-                    value={title}
+                    value={clientNote?.title || ""}
                     className='w-full col-span-2'
-                    onChange={handleTitleChange}
+                    onChange={(e) => handleClientDataChange({ title: e.target.value })}
+                    readOnly={!(isEditing && canEdit)}
                 />
-                <div className='col-span-2 flex flex-nowrap  gap-x-2'>
-                    <Switch size="sm" className='min-w-fit' isSelected={isEditing} onChange={(e) => setIsEditing(e.target.checked)}>Editing</Switch>
-
+                <div className='col-span-2 flex flex-nowrap gap-x-2'>
+                    <Switch
+                        size="sm"
+                        className='min-w-fit'
+                        isSelected={isEditing}
+                        onChange={(e) => setIsEditing(e.target.checked)}
+                        isDisabled={!canEdit}
+                    >
+                        Editing
+                    </Switch>
+                    <Switch
+                        size="sm"
+                        className='min-w-fit'
+                        isSelected={clientNote?.public || false}
+                        onChange={(e) => handleClientDataChange({ public: e.target.checked })}
+                        isDisabled={!(canEdit && isEditing)}
+                    >
+                        Public
+                    </Switch>
                     <div className='min-w-40 w-full'>
                         <Select
                             label="Category"
@@ -101,8 +126,10 @@ function Edit({
                             selectionMode="multiple"
                             variant='flat'
                             size='sm'
-                            selectedKeys={selectedTags}
-                            onSelectionChange={handleTagsChange}
+                            selectedKeys={clientNote?.tags || []}
+                            onSelectionChange={(e) => handleClientDataChange({ tags: Array.from(e) })}
+                            readOnly={!(isEditing && canEdit)}
+                            isDisabled={!canEdit}
                         >
                             <SelectItem
                                 key={"EditTags"}
@@ -115,16 +142,14 @@ function Edit({
                             >
                                 Edit Tags
                             </SelectItem>
-
-                            {tags.map((tag) => (
-                                <SelectItem key={tag.id}>
+                            {tags?.map((tag) => (
+                                <SelectItem key={tag.id} value={tag.id}>
                                     {tag.title}
                                 </SelectItem>
                             ))}
                         </Select>
                     </div>
                 </div>
-
             </div>
 
             <div className="w-full overflow-y-auto">
@@ -136,16 +161,15 @@ function Edit({
                             className="w-full"
                             minRows={30}
                             maxRows={99999}
-                            value={content}
-                            onChange={handleContentChange}
+                            value={clientNote?.content || ""}
+                            onChange={(e) => handleClientDataChange({ content: e.target.value })}
                             readOnly={!isEditing}
                         />
                     ) : (
-                        <ReactMarkdown className="markdown">{content}</ReactMarkdown>
+                        <ReactMarkdown className="markdown">{clientNote?.content}</ReactMarkdown>
                     )}
                 </ScrollShadow>
             </div>
-
         </div>
     );
 }

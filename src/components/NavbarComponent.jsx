@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import useDarkMode from '../hooks/useDarkMode';
+import useAuth from "../hooks/useAuth";
 
 function NavbarComponent({
-    addNote,
+    handleCreateNote,
     ...props
 }) {
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
@@ -14,13 +15,20 @@ function NavbarComponent({
     const [newNoteId, setNewNoteId] = useState(null);
     const { isDarkMode, toggleDarkMode, currentThemeIconName } = useDarkMode();
 
+    const { user, userLoading } = useAuth();
+
     const navigate = useNavigate();
 
-    const handleNewNote = () => {
-        const newNote = addNote();
-        setNewNoteId(newNote.id);
+    const handleNewNote = async () => {
+        const newNoteId = await handleCreateNote();
+        if (!newNoteId) {
+            alert("Failed to create new note. are you logged in?");
+            return;
+        }
+        setNewNoteId(newNoteId);
         setIsRedirectModalOpen(true);
     };
+
 
 
     return (
@@ -49,7 +57,6 @@ function NavbarComponent({
                 </NavbarContent>
 
                 <NavbarContent as="div" justify="end">
-
                     <NavbarItem>
                         <Tooltip
                             className="text-xs"
@@ -68,15 +75,21 @@ function NavbarComponent({
                                 isBordered
                                 as="button"
                                 className="transition-transform w-6 h-6 text-tiny"
-                                color="primary"
+                                color={user ? "primary" : "default"}
                                 showFallback
-                                src="#"
+                                src={user?.photoURL}
                             />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">
-                            <DropdownItem key="profile" className="h-14 gap-2" showDivider textValue="Profile">
-                                <p className="font-semibold">Guest</p>
-                                <p className="text-foreground-400">No cloud sync</p>
+                            <DropdownItem key="profile" className="h-14 gap-2" showDivider textValue="Profile" onClick={() => navigate("/profile")}>
+                                <p className="font-semibold">
+                                    {user?.isAnonymous && "Anonymous"}
+                                    {!user?.isAnonymous && (user?.displayName || "Profile")}
+                                </p>
+                                <p className="text-foreground-400">
+                                    {user?.isAnonymous && "No Email"}
+                                    {!user?.isAnonymous && (user?.email || "Not logged in")}
+                                </p>
                             </DropdownItem>
                             <DropdownItem key="tags" onClick={() => navigate("/tags")}>
                                 My Tags
@@ -121,7 +134,7 @@ function NavbarComponent({
             />
             <ConfirmationModal
                 isOpen={isAboutModalOpen}
-                onClose={() => setIsRedirectModalOpen(false)}
+                onClose={() => setIsAboutModalOpen(false)}
                 title="NIGPAD - beta"
                 message="Made by clod44 - https://github.com/clod44/nigpad"
                 buttons={[

@@ -1,7 +1,8 @@
 import { Input, Spinner, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Fuse from "fuse.js";
+import { debounce } from 'lodash';
 
 export default function Search({
     notes,
@@ -12,79 +13,63 @@ export default function Search({
 }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [timer, setTimer] = useState(null);
     const [selectedTags, setSelectedTags] = useState([]);
 
+    const debouncedFilterNotes = useCallback(
+        debounce(async (term) => {
+            setIsLoading(true);
+            let tagsFilteredNotes = notes;
 
+            if (selectedTags.length > 0) {
+                tagsFilteredNotes = notes.filter(note =>
+                    selectedTags.every(tag => note.tags.includes(tag))
+                );
+            }
 
+            if (!term) {
+                setFilteredNotes(tagsFilteredNotes);
+                setIsLoading(false);
+                return;
+            }
 
+            const fuse = new Fuse(tagsFilteredNotes, {
+                keys: ['title', 'content'],
+                threshold: 0.3,
+                ignoreLocation: true,
+                includeScore: true
+            });
+
+            const results = fuse.search(term);
+            const filtered = results.map(result => result.item);
+
+            setFilteredNotes(filtered);
+            setIsLoading(false);
+        }, 300),
+        [notes, selectedTags, setFilteredNotes]
+    );
+
+    useEffect(() => {
+        debouncedFilterNotes(searchTerm);
+    }, [selectedTags, searchTerm, debouncedFilterNotes]);
+
+    useEffect(() => {
+        return () => {
+            debouncedFilterNotes.cancel();
+        };
+    }, [debouncedFilterNotes]);
 
     const handleSearchTermUpdate = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
         setIsLoading(true);
-
-        if (timer) {
-            clearTimeout(timer);
-        }
-
-        const newTimer = setTimeout(() => {
-            filterNotes(value);
-        }, 300);
-
-        setTimer(newTimer);
+        debouncedFilterNotes(value);
     };
-    const filterNotes = async (term) => {
-        setIsLoading(true);
-
-        let tagsFilteredNotes = notes;
-
-        if (selectedTags.length > 0) {
-            tagsFilteredNotes = notes.filter(note =>
-                selectedTags.every(tag => note.tags.includes(tag))
-            );
-        }
-
-        if (!term) {
-            setFilteredNotes(tagsFilteredNotes);
-            setIsLoading(false);
-            return;
-        }
-
-        const fuse = new Fuse(tagsFilteredNotes, {
-            keys: ['title', 'content'],
-            threshold: 0.3,
-            ignoreLocation: true,
-            includeScore: true
-        });
-
-        const results = fuse.search(term);
-
-        const filtered = results.map(result => result.item);
-
-        setFilteredNotes(filtered);
-        setIsLoading(false);
-    };
-
 
     const handleSelectedTagsChange = (e) => {
         const newTagsArray = Array.from(e);
-        console.log(newTagsArray);
         setSelectedTags(newTagsArray);
+        setIsLoading(true);
     };
-
-
-    useEffect(() => {
-        filterNotes(searchTerm);
-    }, [notes, selectedTags]);
-
-    useEffect(() => {
-        return () => {
-            if (timer) {
-                clearTimeout(timer);
-            }
-        };
-    }, [timer]);
 
     return (
         <div>
@@ -96,14 +81,11 @@ export default function Search({
                 value={searchTerm}
                 onChange={handleSearchTermUpdate}
                 endContent={
-
                     <div className="flex gap-2 flex-nowrap items-center">
-
                         {isLoading ? (
                             <Spinner size="sm" className="text-2xl text-default-400 flex-shrink-0" />
                         ) : (
                             <>
-                                {/* Filter by tags dropdown*/}
                                 <Dropdown>
                                     <DropdownTrigger>
                                         <Button
@@ -121,7 +103,7 @@ export default function Search({
                                         closeOnSelect={false}
                                         selectionMode="multiple"
                                         selectedKeys={selectedTags}
-                                        onSelectionChange={(e) => handleSelectedTagsChange(e)}
+                                        onSelectionChange={handleSelectedTagsChange}
                                     >
                                         <DropdownItem
                                             key={"EditTags"}
@@ -134,22 +116,19 @@ export default function Search({
                                         >
                                             <p className="font-bold">Edit Tags</p>
                                         </DropdownItem>
-                                        {tags.map((tag) => (
+                                        {tags?.map((tag) => (
                                             <DropdownItem key={tag.id} value={tag.id}>
                                                 {tag.title}
                                             </DropdownItem>
                                         ))}
                                     </DropdownMenu>
                                 </Dropdown>
-                                {/* Cosmetic Search icon*/}
                                 <GetIcon name="Search" className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                             </>
                         )}
-
                     </div>
                 }
             />
-
-        </div >
+        </div>
     );
 }
