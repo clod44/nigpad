@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import useDarkMode from '../hooks/useDarkMode';
 import useAuth from "../hooks/useAuth";
+import Search from "./Search";
 
 function NavbarComponent({
     handleCreateNote,
@@ -36,7 +37,9 @@ function NavbarComponent({
                 </NavbarContent>
 
                 <NavbarContent as="div" justify="end">
-
+                    <NavbarItem>
+                        <Search />
+                    </NavbarItem>
                     <Dropdown placement="bottom-end" className="border border-foreground-300">
                         <DropdownTrigger>
                             <Avatar

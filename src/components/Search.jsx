@@ -1,16 +1,16 @@
 import { Input, Spinner, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import Fuse from "fuse.js";
 import { debounce } from 'lodash';
-
+import { NoteContext } from "../context/NoteProvider";
 export default function Search({
-    notes = [],
-    tags = [],
-    setFilteredNotes,
+    setFilteredNotes = () => { },
     filteredNotes = [],
     ...props
 }) {
+    const { notes, tags } = useContext(NoteContext);
+
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [selectedTags, setSelectedTags] = useState([]);
@@ -74,58 +74,57 @@ export default function Search({
     return (
         <div>
             <Input
+                size="md"
                 type="text"
-                label={searchTerm ? `${filteredNotes.length} found` : `${notes.length} notes`}
                 placeholder="Search"
-                labelPlacement="inside"
                 value={searchTerm || ''}
                 onChange={handleSearchTermUpdate}
                 endContent={
                     <div className="flex gap-2 flex-nowrap items-center">
-                        {isLoading ? (
-                            <Spinner size="sm" className="text-2xl text-default-400 flex-shrink-0" />
-                        ) : (
-                            <>
-                                <Dropdown>
-                                    <DropdownTrigger>
-                                        <Button
-                                            isIconOnly
-                                            variant="light"
-                                        >
-                                            <GetIcon name="Filter" className={`text-2xl text-default-400 ${selectedTags.length > 0 ? 'text-foreground' : ''} pointer-events-none flex-shrink-0`} />
-                                        </Button>
-                                    </DropdownTrigger>
-                                    <DropdownMenu
-                                        aria-label="Multiple selection example"
-                                        variant="solid"
-                                        color="primary"
-                                        disallowEmptySelection={false}
-                                        closeOnSelect={false}
-                                        selectionMode="multiple"
-                                        selectedKeys={selectedTags || []}
-                                        onSelectionChange={handleSelectedTagsChange}
-                                    >
-                                        <DropdownItem
-                                            key={"EditTags"}
-                                            value={"EditTags"}
-                                            textValue="Edit tags"
-                                            variant="faded"
-                                            startContent={<GetIcon name="Edit" />}
-                                            showDivider
-                                            href="/tags"
-                                        >
-                                            <p className="font-bold">Edit Tags</p>
-                                        </DropdownItem>
-                                        {tags?.map((tag) => (
-                                            <DropdownItem key={tag.id} value={tag.id}>
-                                                {tag.title}
-                                            </DropdownItem>
-                                        ))}
-                                    </DropdownMenu>
-                                </Dropdown>
-                                <GetIcon name="Search" className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                            </>
-                        )}
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button
+                                    isIconOnly
+                                    variant="light"
+                                >
+                                    <GetIcon name="Filter" className={`text-2xl text-default-400 ${selectedTags.length > 0 ? 'text-foreground' : ''} pointer-events-none flex-shrink-0`} />
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="Multiple selection example"
+                                variant="solid"
+                                color="primary"
+                                disallowEmptySelection={false}
+                                closeOnSelect={false}
+                                selectionMode="multiple"
+                                selectedKeys={selectedTags || []}
+                                onSelectionChange={handleSelectedTagsChange}
+                            >
+                                <DropdownItem
+                                    key={"EditTags"}
+                                    value={"EditTags"}
+                                    textValue="Edit tags"
+                                    variant="faded"
+                                    startContent={<GetIcon name="Edit" />}
+                                    showDivider
+                                    href="/tags"
+                                >
+                                    <p className="font-bold">Edit Tags</p>
+                                </DropdownItem>
+                                {tags?.map((tag) => (
+                                    <DropdownItem key={tag.id} value={tag.id}>
+                                        {tag.title}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                        <div className="w-5 flex items-center justify-center">
+                            {isLoading ? (
+                                <Spinner size="sm" className="text-2xl text-default-400 flex-shrink-0" />
+                            ) : (
+                                <GetIcon name="Search" className="text-2xl text-default-400 pointer-events-none flex-shrink-0 p-0" />
+                            )}
+                        </div>
                     </div>
                 }
             />
