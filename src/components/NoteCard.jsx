@@ -17,10 +17,8 @@ function NoteCard({
         ? tags.filter(tag => note.tags.includes(tag.id))
         : [];
 
-
-
     return (
-        <Card className="bg-background border border-default-100 shadow-lg duration-300" isHoverable isFooterBlurred>
+        <Card className="bg-background border-t-1 border-r-1 border-default shadow-md duration-300 hover:scale-95" isFooterBlurred>
             <Divider />
             <CardBody className="min-h-32 max-h-60">
                 <ScrollShadow hideScrollBar className="w-full h-full" size={40}>
@@ -29,7 +27,7 @@ function NoteCard({
                     </Markdown>
                 </ScrollShadow>
             </CardBody>
-            <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 pe-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+            <CardFooter className="bg-background dark:bg-transparent justify-between border-default border-1 overflow-hidden py-1 pe-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow ml-1 z-10">
                 <div className="w-full flex flex-nowrap items-center">
                     <div className="flex flex-col flex-nowrap flex-grow">
                         <div className="w-full grid grid-cols-12">

@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { getAuth, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
+import useAuth from "../hooks/useAuth";
 import { Divider, Tabs, Tab, Avatar, Button, Card, CardBody, CardFooter, Input } from '@nextui-org/react';
 import { updateDisplayName } from '../services/userService';
 
 export default function Profile() {
+    const { auth, user } = useAuth();
     const [isAnonymous, setIsAnonymous] = useState(false);
-    const [user, setUser] = useState(null);
-    const auth = getAuth();
     const [name, setName] = useState('');
-
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            setUser(user);
-        });
-        return () => unsubscribe();
-    }, [auth]);
 
     useEffect(() => {
         if (user) {
@@ -28,7 +20,6 @@ export default function Profile() {
         try {
             await signOut(auth);
             console.log("User signed out");
-            setUser(null);
         } catch (error) {
             console.error("Error signing out: ", error);
         }

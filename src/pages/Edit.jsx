@@ -1,18 +1,18 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import { debounce } from 'lodash';
 import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import GetIcon from "../icons/GetIcon";
 import ReactMarkdown from 'react-markdown';
 import { getNoteById } from '../services/noteService';
+import { NoteContext } from '../context/NoteContext';
 
-//TODO:refactor state management in Edit.jsx. its shitty
 function Edit({
-    notes,
-    handleUpdateNote,
-    tags,
     ...props
 }) {
+
+    const { notes, tags, handleUpdateNote, handleDeleteNote } = useContext(NoteContext);
+
     const navigate = useNavigate();
     const { id } = useParams();
     //they create a update cycle
@@ -55,7 +55,7 @@ function Edit({
     useEffect(() => {
         if (serverNote) {
             //purify the note's tags from old or undefined tags:
-            const validTags = serverNote.tags?.filter(tagId => tags.some(tag => tag.id === tagId)) || [];
+            const validTags = serverNote.tags?.filter(tagId => tags?.some(tag => tag.id === tagId)) || [];
             setClientNote({ ...serverNote, tags: validTags });
         }
     }, [serverNote]);

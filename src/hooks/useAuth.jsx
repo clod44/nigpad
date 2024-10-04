@@ -14,7 +14,7 @@ const useAuth = () => {
         return () => unsubscribe();
     }, [auth]);
 
-    return { user, userLoading };
+    return { auth, user, userLoading };
 };
 
 export default useAuth;

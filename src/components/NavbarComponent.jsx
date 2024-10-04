@@ -5,29 +5,19 @@ import { useNavigate, Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 import useDarkMode from '../hooks/useDarkMode';
 import useAuth from "../hooks/useAuth";
+import Search from "./Search";
 
 function NavbarComponent({
     handleCreateNote,
     ...props
 }) {
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
-    const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
-    const [newNoteId, setNewNoteId] = useState(null);
     const { isDarkMode, toggleDarkMode, currentThemeIconName } = useDarkMode();
 
     const { user, userLoading } = useAuth();
 
     const navigate = useNavigate();
 
-    const handleNewNote = async () => {
-        const newNoteId = await handleCreateNote();
-        if (!newNoteId) {
-            alert("Failed to create new note. are you logged in?");
-            return;
-        }
-        setNewNoteId(newNoteId);
-        setIsRedirectModalOpen(true);
-    };
 
 
 
@@ -36,38 +26,21 @@ function NavbarComponent({
             <Navbar
                 isBordered
                 variant="fixed"
-                height={"2.5rem"}>
+                className="shadow"
+            >
 
-                <NavbarContent className="sm:hidden pr-3" justify="center">
+                <NavbarContent className="gap-4" justify="center">
                     <NavbarBrand>
-                        <Link to="/" className="hover:tracking-widest duration-200 transition-all">
-                            <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
-                        </Link>
-                    </NavbarBrand>
-                </NavbarContent>
-
-
-                <NavbarContent className="hidden sm:flex gap-4" justify="center">
-                    <NavbarBrand>
-                        <Link to="/" className="hover:tracking-widest duration-200 transition-all flex flex-nowrap items-center text-primary">
-                            <GetIcon name="Home" />
-                            <p className="ms-2 font-black text-inherit text-md metallic-text">NIGPAD</p>
+                        <Link to="/" className=" tracking-wide hover:tracking-widest duration-200 transition-all flex flex-nowrap items-center text-primary">
+                            <GetIcon name="Home" className="hidden sm:flex" />
+                            <p className="ms-2 font-bold text-inherit text-lg metallic-text">NIGPAD</p>
                         </Link>
                     </NavbarBrand>
                 </NavbarContent>
 
                 <NavbarContent as="div" justify="end">
                     <NavbarItem>
-                        <Tooltip
-                            className="text-xs"
-                            showArrow={true}
-                            content="New Note"
-                            placement="Bottom"
-                        >
-                            <Button isIconOnly color="primary" variant="light" onClick={handleNewNote}>
-                                <GetIcon name="NewFile" />
-                            </Button>
-                        </Tooltip>
+                        <Search />
                     </NavbarItem>
                     <Dropdown placement="bottom-end" className="border border-foreground-300">
                         <DropdownTrigger>
@@ -107,31 +80,6 @@ function NavbarComponent({
                 </NavbarContent>
             </Navbar >
 
-            <ConfirmationModal
-                isOpen={isRedirectModalOpen}
-                onClose={() => setIsRedirectModalOpen(false)}
-                title="New Note has been created."
-                message="Would you like to Edit it now?"
-                buttons={[
-                    {
-                        label: "No",
-                        color: "danger",
-                        onPress: () => {
-                            setIsRedirectModalOpen(false);
-                        },
-                        variant: "light",
-                    },
-                    {
-                        label: "Edit Now",
-                        color: "primary",
-                        onPress: () => {
-                            navigate(`/note/${newNoteId}`);
-                            setIsRedirectModalOpen(false);
-                        },
-                        variant: "shadow",
-                    },
-                ]}
-            />
             <ConfirmationModal
                 isOpen={isAboutModalOpen}
                 onClose={() => setIsAboutModalOpen(false)}
