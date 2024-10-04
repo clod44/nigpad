@@ -15,19 +15,17 @@ function Edit({
 }) {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [loaded, setLoaded] = useState(false);
-    const [note, setNote] = useState(null);
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [selectedTags, setSelectedTags] = useState([]);
+    //they create a update cycle
+    const [serverNote, setServerNote] = useState(null); //note data from the server
+    const [clientNote, setClientNote] = useState(null); //note that is being edited and shown in the UI
+
     const [canEdit, setCanEdit] = useState(false);
     const [isEditing, setIsEditing] = useState(true);
-    const [isPublic, setIsPublic] = useState(false);
 
     const acquireNoteData = async (noteId) => {
-        const gettingNote = notes?.find(n => n.id === noteId);
+        const fetchedNote = notes?.find(n => n.id === noteId);
         setCanEdit(true);
-        if (gettingNote) return gettingNote;
+        if (fetchedNote) return fetchedNote;
         //the note wasnt found in user's notes. we will try to get it from the server.
         //the note editing wont work due to permissions but we also disable the ui.
         setCanEdit(false);
@@ -43,43 +41,39 @@ function Edit({
                 navigate('/');
                 return;
             }
-            const gettingNote = await acquireNoteData(id);
-            if (!gettingNote) {
+            const fetchedNote = await acquireNoteData(id);
+            if (!fetchedNote) {
                 alert("Note not found");
                 navigate('/');
                 return;
             }
-            setNote(gettingNote);
+            setServerNote(fetchedNote);
         };
         fetchNoteData();
     }, [id]);
 
     useEffect(() => {
-        if (note) {
-            setTitle(note.title);
-            setContent(note.content);
-            // Filter note.tags to include only valid tag IDs
-            console.log("COMING NOTE TAGS:", note.tags);
-            const validTags = note.tags?.filter(tagId => tags.some(tag => tag.id === tagId)) || [];
-            setSelectedTags(validTags);
-            setLoaded(true);
-            setIsPublic(note.public || false);
+        if (serverNote) {
+            //purify the note's tags from old or undefined tags:
+            const validTags = serverNote.tags?.filter(tagId => tags.some(tag => tag.id === tagId)) || [];
+            setClientNote({ ...serverNote, tags: validTags });
         }
-    }, [note]);
+    }, [serverNote]);
 
 
     const debouncedHandleUpdateNote = useCallback(
         debounce((id, data) => {
+            console.log("debouncedHandleUpdateNote", id, data);
             handleUpdateNote(id, data);
         }, 400),
         [handleUpdateNote]
     );
 
     useEffect(() => {
-        if (loaded && note && isEditing) {
-            debouncedHandleUpdateNote(id, { title, content, tags: selectedTags, public: isPublic });
+        if (serverNote) {
+            debouncedHandleUpdateNote(id, { ...clientNote });
         }
-    }, [title, content, selectedTags, loaded, isEditing, isPublic]);
+    }, [clientNote]);
 
     useEffect(() => {
         return () => {
@@ -87,13 +81,10 @@ function Edit({
         };
     }, [debouncedHandleUpdateNote]);
 
-    // handlers
-    const handleTitleChange = (e) => setTitle(e.target.value);
-    const handleContentChange = (e) => setContent(e.target.value);
-    const handleTagsChange = (e) => {
-        setSelectedTags(Array.from(e));
-    };
-
+    const handleClientDataChange = (data) => {
+        if (!clientNote) return;
+        setClientNote({ ...clientNote, ...data });
+    }
 
 
     return (
@@ -104,9 +95,9 @@ function Edit({
                     variant="underlined"
                     placeholder="Title"
                     size="lg"
-                    value={title}
+                    value={clientNote?.title || ""}
                     className='w-full col-span-2'
-                    onChange={handleTitleChange}
+                    onChange={(e) => handleClientDataChange({ title: e.target.value })}
                     readOnly={!(isEditing && canEdit)}
                 />
                 <div className='col-span-2 flex flex-nowrap gap-x-2'>
@@ -122,8 +113,8 @@ function Edit({
                     <Switch
                         size="sm"
                         className='min-w-fit'
-                        isSelected={isPublic}
-                        onChange={(e) => setIsPublic(e.target.checked)}
+                        isSelected={clientNote?.public || false}
+                        onChange={(e) => handleClientDataChange({ public: e.target.checked })}
                         isDisabled={!(canEdit && isEditing)}
                     >
                         Public
@@ -135,8 +126,8 @@ function Edit({
                             selectionMode="multiple"
                             variant='flat'
                             size='sm'
-                            selectedKeys={selectedTags}
-                            onSelectionChange={handleTagsChange}
+                            selectedKeys={clientNote?.tags || []}
+                            onSelectionChange={(e) => handleClientDataChange({ tags: Array.from(e) })}
                             readOnly={!(isEditing && canEdit)}
                             isDisabled={!canEdit}
                         >
@@ -170,12 +161,12 @@ function Edit({
                             className="w-full"
                             minRows={30}
                             maxRows={99999}
-                            value={content}
-                            onChange={handleContentChange}
+                            value={clientNote?.content || ""}
+                            onChange={(e) => handleClientDataChange({ content: e.target.value })}
                             readOnly={!isEditing}
                         />
                     ) : (
-                        <ReactMarkdown className="markdown">{content}</ReactMarkdown>
+                        <ReactMarkdown className="markdown">{clientNote?.content}</ReactMarkdown>
                     )}
                 </ScrollShadow>
             </div>
