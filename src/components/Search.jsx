@@ -5,10 +5,10 @@ import Fuse from "fuse.js";
 import { debounce } from 'lodash';
 
 export default function Search({
-    notes,
-    tags,
+    notes = [],
+    tags = [],
     setFilteredNotes,
-    filteredNotes,
+    filteredNotes = [],
     ...props
 }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -20,8 +20,8 @@ export default function Search({
             setIsLoading(true);
             let tagsFilteredNotes = notes;
 
-            if (selectedTags.length > 0) {
-                tagsFilteredNotes = notes.filter(note =>
+            if (selectedTags?.length > 0) {
+                tagsFilteredNotes = notes?.filter(note =>
                     selectedTags.every(tag => note.tags.includes(tag))
                 );
             }
@@ -78,7 +78,7 @@ export default function Search({
                 label={searchTerm ? `${filteredNotes.length} found` : `${notes.length} notes`}
                 placeholder="Search"
                 labelPlacement="inside"
-                value={searchTerm}
+                value={searchTerm || ''}
                 onChange={handleSearchTermUpdate}
                 endContent={
                     <div className="flex gap-2 flex-nowrap items-center">
@@ -102,7 +102,7 @@ export default function Search({
                                         disallowEmptySelection={false}
                                         closeOnSelect={false}
                                         selectionMode="multiple"
-                                        selectedKeys={selectedTags}
+                                        selectedKeys={selectedTags || []}
                                         onSelectionChange={handleSelectedTagsChange}
                                     >
                                         <DropdownItem
