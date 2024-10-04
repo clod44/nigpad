@@ -26,7 +26,6 @@ export default function Home({
             <ScrollShadow hideScrollBar className="w-full flex-grow" size={40}>
                 <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
                     {filteredNotes.map((note) => {
-                        console.log('Note:', note); // Log each note
                         return note && (
                             <NoteCard key={note.id} note={note} handleDeleteNote={handleDeleteNote} tags={tags} />
                         );

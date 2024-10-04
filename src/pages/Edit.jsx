@@ -58,11 +58,15 @@ function Edit({
         if (note) {
             setTitle(note.title);
             setContent(note.content);
-            setSelectedTags(note.tags || []);
+            // Filter note.tags to include only valid tag IDs
+            console.log("COMING NOTE TAGS:", note.tags);
+            const validTags = note.tags?.filter(tagId => tags.some(tag => tag.id === tagId)) || [];
+            setSelectedTags(validTags);
             setLoaded(true);
             setIsPublic(note.public || false);
         }
     }, [note]);
+
 
     const debouncedHandleUpdateNote = useCallback(
         debounce((id, data) => {
@@ -73,7 +77,7 @@ function Edit({
 
     useEffect(() => {
         if (loaded && note && isEditing) {
-            debouncedHandleUpdateNote(id, { title, content, public: isPublic });
+            debouncedHandleUpdateNote(id, { title, content, tags: selectedTags, public: isPublic });
         }
     }, [title, content, selectedTags, loaded, isEditing, isPublic]);
 
@@ -86,7 +90,11 @@ function Edit({
     // handlers
     const handleTitleChange = (e) => setTitle(e.target.value);
     const handleContentChange = (e) => setContent(e.target.value);
-    const handleTagsChange = (e) => setSelectedTags(Array.from(e));
+    const handleTagsChange = (e) => {
+        setSelectedTags(Array.from(e));
+    };
+
+
 
     return (
         <div className="h-full flex flex-col gap-3 p-4 pb-0 overflow-hidden">
@@ -144,7 +152,7 @@ function Edit({
                                 Edit Tags
                             </SelectItem>
                             {tags?.map((tag) => (
-                                <SelectItem key={tag.id}>
+                                <SelectItem key={tag.id} value={tag.id}>
                                     {tag.title}
                                 </SelectItem>
                             ))}

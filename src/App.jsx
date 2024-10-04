@@ -12,18 +12,20 @@ import Login from './pages/Login.jsx';
 import NavbarComponent from './components/NavbarComponent';
 import StatusBar from './components/StatusBar.jsx';
 
-import { v4 as uuidv4 } from 'uuid';
-
 import { createNote, updateNote, deleteNote, getNoteById, getAllNotes } from './services/noteService';
+import { createTag, updateTag, deleteTag, getTagById, getAllTags } from './services/tagService';
 import useAuth from './hooks/useAuth';
 
 function App() {
     const [notes, setNotes] = useState([]);
+    const [tags, setTags] = useState([]);
     const { user, userLoading } = useAuth();
 
     const updateNotes = async () => {
         if (!user) return;
         const _notes = await getAllNotes(user?.uid);
+        const _tags = await getAllTags(user?.uid);
+        setTags(_tags || []);
         setNotes(_notes || []);
     }
     useEffect(() => {
@@ -50,55 +52,18 @@ function App() {
         await updateNotes();
     };
 
-
-    //TODO:cloud-sync tags
-    const [tags, setTags] = useState(() => {
-        return;
-        const savedTags = localStorage.getItem('tags');
-        return savedTags ? JSON.parse(savedTags) : [];
-    });
-    const handleCreateTag = (title) => {
-        return;
-        const timestamp = Date.now();
-        const newTag = {
-            id: uuidv4(),
-            title: title || "New category",
-            timestamp: timestamp
-        };
-        setTags((prevTags) => {
-            const updatedTags = [...prevTags, newTag];
-            localStorage.setItem('tags', JSON.stringify(updatedTags));
-            return updatedTags;
-        });
-        return newTag;
+    const handleCreateTag = async (title = "New Tag") => {
+        const tagId = await createTag(user?.uid, title);
+        await updateNotes();
+        return tagId;
     };
-    const handleDeleteTag = (id) => {
-        return;
-        const notesWithTag = notes.filter((note) => note.tags.includes(id));
-        //remove that tag from those notes
-        notesWithTag.forEach((note) => {
-            note.tags = note.tags.filter((tag) => tag !== id);
-            updateNote(note.id, { tags: note.tags });
-        })
-
-        setTags((prevTags) => {
-            const updatedTags = prevTags.filter((tag) => tag.id !== id);
-            localStorage.setItem('tags', JSON.stringify(updatedTags));
-            return updatedTags;
-        });
+    const handleDeleteTag = async (id) => {
+        await deleteTag(id);
+        await updateNotes();
     };
-    const handleUpdateTag = (id, title) => {
-        return;
-        setTags((prevTags) => {
-            const updatedTags = prevTags.map((tag) => {
-                if (tag.id === id) {
-                    return { ...tag, title };
-                }
-                return tag;
-            });
-            localStorage.setItem('tags', JSON.stringify(updatedTags));
-            return updatedTags;
-        });
+    const handleUpdateTag = async (id, data) => {
+        await updateTag(id, data);
+        await updateNotes();
     };
 
     return (
@@ -108,12 +73,41 @@ function App() {
                     <AuthListener>
                         <NavbarComponent handleCreateNote={handleCreateNote} />
                         <Routes>
-                            <Route path="/" element={<Home notes={notes} handleUpdateNote={handleUpdateNote} handleDeleteNote={handleDeleteNote} />} />
-                            <Route path="/note/:id" element={<Edit notes={notes} handleUpdateNote={handleUpdateNote} tags={tags} />} />
-                            <Route path="/tags" element={<Tags notes={notes} tags={tags} handleCreateNote={handleCreateNote} handleUpdateTag={handleUpdateTag} handleDeleteTag={handleDeleteNote} />} />
-                            <Route path="/profile" element={<Profile />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="*" element={<NotFound />} />
+                            <Route path="/" element={
+                                <Home
+                                    notes={notes}
+                                    handleUpdateNote={handleUpdateNote}
+                                    handleDeleteNote={handleDeleteNote}
+                                    tags={tags}
+                                />
+                            } />
+
+                            <Route path="/note/:id" element={
+                                <Edit
+                                    notes={notes}
+                                    handleUpdateNote={handleUpdateNote}
+                                    tags={tags}
+                                />
+                            } />
+                            <Route path="/tags" element={
+                                <Tags
+                                    notes={notes}
+                                    tags={tags}
+                                    handleCreateTag={handleCreateTag}
+                                    handleUpdateTag={handleUpdateTag}
+                                    handleDeleteTag={handleDeleteTag}
+                                />
+                            } />
+                            <Route path="/profile" element={
+                                <Profile />
+                            } />
+                            <Route path="/login" element={
+                                <Login />
+                            } />
+                            <Route path="*" element={
+                                <NotFound />
+                            } />
+
                         </Routes>
                         <StatusBar />
                     </AuthListener>

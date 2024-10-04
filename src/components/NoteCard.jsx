@@ -13,13 +13,11 @@ function NoteCard({
     if (!note) {
         return null;
     }
-
-    const noteTagTitles = note.tags && note.tags.length > 0 && tags && tags.length > 0
-        ? note.tags.map((noteTagId) => {
-            const foundTag = tags.find(tag => tag.id === noteTagId);
-            return foundTag ? foundTag.title : noteTagId;
-        })
+    const selectedTags = note.tags && note.tags.length > 0 && tags && tags.length > 0
+        ? tags.filter(tag => note.tags.includes(tag.id))
         : [];
+
+
 
     return (
         <Card className="bg-background border border-default-100 shadow-lg duration-300" isHoverable isFooterBlurred>
@@ -37,16 +35,19 @@ function NoteCard({
                         <div className="w-full grid grid-cols-12">
                             <Link to={`/note/${note.id}`} className="col-span-12 text-primary hover:text-foreground hover:py-2 duration-300">
                                 <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={10}>
-                                    {console.log('NOOOOTEEEE:', note)}
                                     <p className="text-md text-nowrap">{note.title}</p>
                                     <p className="text-xs text-default-500 text-nowrap col-span-1">{formatTimestamp(note.created?.toDate())}</p>
                                     <div className="flex flex-nowrap mt-1">
-                                        {noteTagTitles.map((noteTagTitle) => (
-                                            <Chip key={noteTagTitle} size="sm" variant="dot" className="text-xs text-nowrap">
-                                                {noteTagTitle}
-                                            </Chip>
-                                        ))}
+                                        {selectedTags.map((tag) => {
+                                            console.log("CHIP", tag);
+                                            return (
+                                                <Chip key={tag.id} size="sm" variant="dot" className="text-xs text-nowrap">
+                                                    {tag.title}
+                                                </Chip>
+                                            );
+                                        })}
                                     </div>
+
                                 </ScrollShadow>
                             </Link>
                         </div>

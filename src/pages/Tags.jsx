@@ -5,9 +5,9 @@ import GetIcon from '../icons/GetIcon';
 function Tags({
     notes,
     tags,
-    addTag,
-    updateTag,
-    deleteTag,
+    handleCreateTag,
+    handleUpdateTag,
+    handleDeleteTag,
     ...props
 }) {
     const [newTag, setNewTag] = useState('');
@@ -20,34 +20,36 @@ function Tags({
 
     const handleAddTag = () => {
         if (newTag.trim()) {
-            addTag(newTag.trim());
+            handleCreateTag(newTag.trim());
             setNewTag('');
         }
     };
 
-    const handleEditTag = (id, title) => {
+    const EditTagPressed = (id, title) => {
         setEditTagId(id);
         setEditedTag(title);
         onEditModalOpen();
     };
 
-    const handleSaveTag = () => {
-        updateTag(editTagId, editedTag.trim());
+    const SaveTagPressed = () => {
+        handleUpdateTag(editTagId, { title: editedTag.trim() });
         onEditModalClose();
     };
 
-    const handleDeleteTag = (id, title) => {
+    const DeleteTagPressed = (id, title) => {
         setDeleteTagId(id);
         setDeleteTagTitle(title);
         onDeleteModalOpen();
     };
 
     const confirmDeleteTag = () => {
-        deleteTag(deleteTagId);
+        handleDeleteTag(deleteTagId);
         onDeleteModalClose();
     };
 
+
     const getTagUseAmount = (tagId) => {
+        return 0;
         const amount = notes.filter(note => note.tags && note.tags.includes(tagId)).length;
         return amount;
     };
@@ -89,12 +91,12 @@ function Tags({
                                 <TableCell className='flex justify-end'>
                                     <div className='flex flex-nowrap'>
                                         <Tooltip content="Edit Tag">
-                                            <Button size="md" variant='light' onPress={() => handleEditTag(tag.id, tag.title)} isIconOnly>
+                                            <Button size="md" variant='light' onPress={() => EditTagPressed(tag.id, tag.title)} isIconOnly>
                                                 <GetIcon name="Edit" />
                                             </Button>
                                         </Tooltip>
                                         <Tooltip color="danger" content="Delete Tag">
-                                            <Button size="md" color="danger" variant='light' onPress={() => handleDeleteTag(tag.id, tag.title)} isIconOnly>
+                                            <Button size="md" color="danger" variant='light' onPress={() => DeleteTagPressed(tag.id, tag.title)} isIconOnly>
                                                 <GetIcon name="Delete" />
                                             </Button>
                                         </Tooltip>
@@ -129,7 +131,7 @@ function Tags({
                                 <Button color="danger" variant="light" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button color="primary" onPress={handleSaveTag}>
+                                <Button color="primary" onPress={SaveTagPressed}>
                                     Save
                                 </Button>
                             </ModalFooter>
