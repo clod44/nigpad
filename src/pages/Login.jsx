@@ -1,5 +1,5 @@
 import { Card, CardBody, CardFooter, CardHeader, Divider, Input, Button, Tooltip } from "@nextui-org/react";
-import GetIcon from "../icons/GetIcon";
+import { EyeIcon, EyeSlashIcon, UserIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { registerWithEmail, loginWithEmail, loginWithGoogle, loginAnonymously } from "../services/authService.js";
 
@@ -81,9 +81,9 @@ export default function Login() {
                                 endContent={
                                     <button className="focus:outline-none" type="button" onClick={togglePasswordVisibility}>
                                         {isPasswordVisible ? (
-                                            <GetIcon name="EyeSlash" className="text-2xl text-default-400 pointer-events-none" />
+                                            <EyeSlashIcon className="size-6 text-default-400 pointer-events-none" />
                                         ) : (
-                                            <GetIcon name="Eye" className="text-2xl text-default-400 pointer-events-none" />
+                                            <EyeIcon className="size-6 text-default-400 pointer-events-none" />
                                         )}
                                     </button>
                                 }
@@ -99,9 +99,9 @@ export default function Login() {
                                     endContent={
                                         <button className="focus:outline-none" type="button" onClick={togglePasswordRepeatVisibility}>
                                             {isPasswordRepeatVisible ? (
-                                                <GetIcon name="EyeSlash" className="text-2xl text-default-400 pointer-events-none" />
+                                                <EyeSlashIcon className="size-6 text-default-400 pointer-events-none" />
                                             ) : (
-                                                <GetIcon name="Eye" className="text-2xl text-default-400 pointer-events-none" />
+                                                <EyeIcon className="size-6 text-default-400 pointer-events-none" />
                                             )}
                                         </button>
                                     }
@@ -126,12 +126,12 @@ export default function Login() {
                         <div className="flex gap-2">
                             <Tooltip className="text-xs" showArrow={true} content="Google" placement="Bottom">
                                 <Button color="primary" size="lg" variant="ghost" isIconOnly onClick={handleLoginWithGoogle}>
-                                    <GetIcon name="Google" />
+                                    <img src="/google-icon-logo.svg" className="size-6" />
                                 </Button>
                             </Tooltip>
                             <Tooltip className="text-xs" showArrow={true} content="Anonymous" placement="Bottom">
                                 <Button color="primary" size="lg" variant="ghost" isIconOnly onClick={handleLoginAnonymously}>
-                                    <GetIcon name="User" />
+                                    <UserIcon className='size-6' />
                                 </Button>
                             </Tooltip>
                         </div>

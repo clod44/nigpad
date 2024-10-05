@@ -1,5 +1,5 @@
 import { Navbar, NavbarMenu, NavbarMenuItem, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, Button, Tooltip, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Avatar } from "@nextui-org/react";
-import GetIcon from "../icons/GetIcon";
+import { HomeIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
@@ -12,7 +12,7 @@ function NavbarComponent({
     ...props
 }) {
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
-    const { isDarkMode, toggleDarkMode, currentThemeIconName } = useDarkMode();
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
 
     const { user, userLoading } = useAuth();
 
@@ -32,7 +32,7 @@ function NavbarComponent({
                 <NavbarContent className="gap-4" justify="center">
                     <NavbarBrand>
                         <Link to="/" className=" tracking-wide hover:tracking-widest duration-200 transition-all flex flex-nowrap items-center text-primary">
-                            <GetIcon name="Home" className="hidden sm:flex" />
+                            <HomeIcon className="size-6 text-primary" />
                             <p className="ms-2 font-bold text-inherit text-lg metallic-text">NIGPAD</p>
                         </Link>
                     </NavbarBrand>
@@ -73,9 +73,10 @@ function NavbarComponent({
                                 key="toggle-dark-mode"
                                 onClick={toggleDarkMode}
                                 closeOnSelect={false}
-                                endContent={<GetIcon name={currentThemeIconName} />}>
+                                endContent={isDarkMode ? <SunIcon className="size-6" /> : <MoonIcon className="size-6" />}>
                                 Theme
                             </DropdownItem>
+
                             <DropdownItem key="about" onClick={() => setIsAboutModalOpen(true)}>About</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>

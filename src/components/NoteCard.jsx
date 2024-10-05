@@ -21,7 +21,7 @@ function NoteCard({
         : [];
 
     return (
-        <Card className="bg-background border-t-1 border-r-1 border-default shadow-md duration-300 hover:scale-95" isFooterBlurred>
+        <Card className="bg-background border-t-1 border-r-1 border-default shadow-md duration-300 hover:brightness-125" isFooterBlurred>
             <Divider />
             <CardBody className="min-h-32 max-h-60">
                 <ScrollShadow hideScrollBar className="w-full h-full" size={40}>

@@ -1,12 +1,11 @@
 import { Container as FabContainer, Button as FabButton, Link as FabLink } from 'react-floating-action-button'
-import GetIcon from "../icons/GetIcon";
+import { PlusIcon } from '@heroicons/react/24/outline'
 
 export default function Fab({
     buttons = [{
         tooltip: "New Note",
         onClick: () => alert('FAB Rocks!'),
         className: "text-primary",
-        iconName: "Plus"
     }],
     ...props
 }) {
@@ -23,7 +22,7 @@ export default function Fab({
                         styles={{ backgroundColor: '#006FEE', color: 'white' }}
                         className={button.className + " hover:animate-pulse active:scale-95 duration-200"}
                     >
-                        <GetIcon name={button.iconName} />
+                        <PlusIcon className="size-6" />
                     </FabButton>
                 ))}
             </FabContainer>

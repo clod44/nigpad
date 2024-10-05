@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.0.1",
+    "@heroicons/react": "^2.1.5",
     "@nextui-org/react": "^2.4.8",
     "@react-aria/interactions": "^3.22.2",
     "@stitches/react": "^1.2.8",

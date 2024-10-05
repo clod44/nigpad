@@ -1,5 +1,5 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, cn } from "@nextui-org/react";
-import GetIcon from "../icons/GetIcon";
+import { EllipsisVerticalIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 import { useNavigate } from 'react-router-dom';
 
@@ -17,18 +17,17 @@ function NoteCardMore({
         navigate(`/`);
     }
 
-    const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
     return (
         <Dropdown className="text-foreground shadow border border-default-100">
             <DropdownTrigger>
                 <Button isIconOnly variant="light">
-                    <GetIcon name="More" />
+                    <EllipsisVerticalIcon className="size-6 text-default-500 flex-shrink-0" />
                 </Button>
             </DropdownTrigger>
             <DropdownMenu variant="faded">
                 <DropdownItem
                     key="edit"
-                    startContent={<GetIcon name="Edit" className={iconClasses} />}
+                    startContent={<PencilSquareIcon className="size-6" />}
                     onClick={handleClickEdit}
                 >
                     Edit file
@@ -37,7 +36,7 @@ function NoteCardMore({
                     key="delete"
                     className="text-danger"
                     color="danger"
-                    startContent={<GetIcon name="Delete" className={cn(iconClasses, "text-danger")} />}
+                    startContent={<TrashIcon className="size-6 text-danger" />}
                     onClick={handleClickDelete}
                 >
                     Delete file

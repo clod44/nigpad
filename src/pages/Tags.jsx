@@ -1,6 +1,6 @@
 import { useState, useContext, useRef } from 'react';
 import { Chip, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
-import GetIcon from '../icons/GetIcon';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { NoteContext } from '../context/NoteContext';
 
 function Tags({
@@ -84,12 +84,12 @@ function Tags({
                                     <div className='flex justify-end flex-nowrap items-center h-full'>
                                         <Tooltip content="Edit Tag">
                                             <Button size="md" variant='light' onPress={() => EditTagPressed(tag)} isIconOnly>
-                                                <GetIcon name="Edit" />
+                                                <PencilSquareIcon className="size-6" />
                                             </Button>
                                         </Tooltip>
                                         <Tooltip color="danger" content="Delete Tag">
                                             <Button size="md" color="danger" variant='light' onPress={() => DeleteTagPressed(tag)} isIconOnly>
-                                                <GetIcon name="Delete" />
+                                                <TrashIcon className="size-6" />
                                             </Button>
                                         </Tooltip>
                                     </div>

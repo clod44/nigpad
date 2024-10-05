@@ -1,7 +1,7 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Chip } from "@nextui-org/react";
 import { useEffect, useState, useContext } from "react";
 import { NoteContext } from "../context/NoteContext";
-import GetIcon from "../icons/GetIcon";
+import { FunnelIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
 export default function TagsDropdown({
     _selectedTags = [],
@@ -24,7 +24,7 @@ export default function TagsDropdown({
                     isIconOnly
                     variant="light"
                 >
-                    <GetIcon name="Filter" className={`text-2xl text-default-400 ${selectedTags.length > 0 ? 'text-foreground' : ''} pointer-events-none flex-shrink-0`} />
+                    <FunnelIcon className={`size-6 text-default-400 ${selectedTags.length > 0 ? 'text-foreground' : ''} pointer-events-none flex-shrink-0`} />
                 </Button>
 
             </DropdownTrigger>
@@ -45,7 +45,7 @@ export default function TagsDropdown({
                     value={"EditTags"}
                     textValue="Edit tags"
                     variant="faded"
-                    startContent={<GetIcon name="Edit" />}
+                    startContent={<PencilSquareIcon className="size-6" />}
                     showDivider
                     href="/tags"
                 >
