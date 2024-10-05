@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { Chip, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import GetIcon from '../icons/GetIcon';
 import { NoteContext } from '../context/NoteContext';
@@ -9,40 +9,38 @@ function Tags({
 
     const { tags, handleCreateTag, handleUpdateTag, handleDeleteTag } = useContext(NoteContext);
 
-    const [newTag, setNewTag] = useState('');
+    const [newTagTitle, setNewTagTitle] = useState('');
     const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalClose } = useDisclosure();
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalClose } = useDisclosure();
-    const [editTagId, setEditTagId] = useState(null);
-    const [editedTag, setEditedTag] = useState('');
-    const [deleteTagId, setDeleteTagId] = useState(null);
-    const [deleteTagTitle, setDeleteTagTitle] = useState('');
+    const [editingTag, setEditingTag] = useState(null);
+
+    const inputColorRef = useRef();
+
 
     const handleAddTag = () => {
-        if (newTag.trim()) {
-            handleCreateTag(newTag.trim());
-            setNewTag('');
+        if (newTagTitle.trim()) {
+            handleCreateTag(newTagTitle.trim());
+            setNewTagTitle('');
         }
     };
 
-    const EditTagPressed = (id, title) => {
-        setEditTagId(id);
-        setEditedTag(title);
+    const EditTagPressed = (tag) => {
+        setEditingTag(tag);
         onEditModalOpen();
     };
 
     const SaveTagPressed = () => {
-        handleUpdateTag(editTagId, { title: editedTag.trim() });
+        handleUpdateTag(editingTag?.id, { ...editingTag, color: inputColorRef.current.value });
         onEditModalClose();
     };
 
-    const DeleteTagPressed = (id, title) => {
-        setDeleteTagId(id);
-        setDeleteTagTitle(title);
+    const DeleteTagPressed = (tag) => {
+        setEditingTag(tag);
         onDeleteModalOpen();
     };
 
-    const confirmDeleteTag = () => {
-        handleDeleteTag(deleteTagId);
+    const confirmDeleteTag = (tag) => {
+        handleDeleteTag(tag?.id);
         onDeleteModalClose();
     };
 
@@ -54,8 +52,8 @@ function Tags({
                 <div className="flex items-center space-x-2">
                     <Input
                         placeholder="Add a new tag"
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
+                        value={newTagTitle}
+                        onChange={(e) => setNewTagTitle(e.target.value)}
                         size="sm"
                         className="w-full"
                     />
@@ -68,24 +66,29 @@ function Tags({
                 {/* tag list */}
                 <Table hideHeader removeWrapper isStriped aria-label='tags table' className='px-5'>
                     <TableHeader>
+                        <TableColumn></TableColumn>
                         <TableColumn>TITLE</TableColumn>
                         <TableColumn align='end'>ACTION</TableColumn>
                     </TableHeader>
                     <TableBody>
-                        {tags.map((tag) => (
+                        {tags?.map((tag) => (
                             <TableRow key={tag.id}>
-                                <TableCell className='text-nowrap'>
-                                    {tag.title}
+                                <TableCell className='p-0'>
+                                    <div className='flex justify-center items-center'>
+                                        <Chip size="sm" style={{ backgroundColor: tag?.color || '#333333' }} variant='bordered'> </Chip>
+                                    </div>                                </TableCell>
+                                <TableCell className='items-center'>
+                                    <p className='text-pretty'>{tag.title}</p>
                                 </TableCell>
-                                <TableCell className='flex justify-end'>
-                                    <div className='flex flex-nowrap'>
+                                <TableCell className='pe-0'>
+                                    <div className='flex justify-end flex-nowrap items-center h-full'>
                                         <Tooltip content="Edit Tag">
-                                            <Button size="md" variant='light' onPress={() => EditTagPressed(tag.id, tag.title)} isIconOnly>
+                                            <Button size="md" variant='light' onPress={() => EditTagPressed(tag)} isIconOnly>
                                                 <GetIcon name="Edit" />
                                             </Button>
                                         </Tooltip>
                                         <Tooltip color="danger" content="Delete Tag">
-                                            <Button size="md" color="danger" variant='light' onPress={() => DeleteTagPressed(tag.id, tag.title)} isIconOnly>
+                                            <Button size="md" color="danger" variant='light' onPress={() => DeleteTagPressed(tag)} isIconOnly>
                                                 <GetIcon name="Delete" />
                                             </Button>
                                         </Tooltip>
@@ -110,11 +113,24 @@ function Tags({
                             <ModalHeader className="flex flex-col gap-1">Edit Tag</ModalHeader>
                             <ModalBody>
                                 <Input
-                                    value={editedTag}
-                                    onChange={(e) => setEditedTag(e.target.value)}
+                                    value={editingTag.title || 'Untitled'}
+                                    onChange={(e) => setEditingTag({ ...editingTag, title: e.target.value || 'Untitled' })}
                                     placeholder="Edit tag title"
+                                    label="Title:"
+                                    labelPlacement='inside'
                                     size="lg"
+                                    className='w-full'
                                 />
+                                <Input
+                                    defaultValue={editingTag.color || '#000000'}
+                                    ref={inputColorRef}
+                                    label="Color:"
+                                    labelPlacement='inside'
+                                    size="lg"
+                                    type='color'
+                                    className='w-full'
+                                />
+
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>
@@ -136,7 +152,7 @@ function Tags({
                         <>
                             <ModalHeader className="flex flex-col gap-1">Confirm Deletion</ModalHeader>
                             <ModalBody>
-                                <p>Are you sure you want to delete the tag "{deleteTagTitle}"?</p>
+                                <p>Are you sure you want to delete the tag "{editingTag.title || 'No name found'}"?</p>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>

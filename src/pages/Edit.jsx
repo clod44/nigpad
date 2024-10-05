@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { debounce } from 'lodash';
-import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow } from "@nextui-org/react";
+import { Textarea, Input, Switch, ScrollShadow } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
-import GetIcon from "../icons/GetIcon";
+import TagsDropdown from "../components/TagsDropdown";
 import ReactMarkdown from 'react-markdown';
 import { getNoteById } from '../services/noteService';
 import { NoteContext } from '../context/NoteContext';
+import { notify } from '../context/ToastContext';
 
 function Edit({
     ...props
@@ -30,20 +31,20 @@ function Edit({
         //the note editing wont work due to permissions but we also disable the ui.
         setCanEdit(false);
         setIsEditing(false);
-        alert("You are viewing a stranger's public note.");
+        notify("You are viewing a stranger's public note.");
         return await getNoteById(noteId);
     };
 
     useEffect(() => {
         const fetchNoteData = async () => {
             if (!id) {
-                alert("Note not found");
+                notify("Note not found", { type: "error" });
                 navigate('/');
                 return;
             }
             const fetchedNote = await acquireNoteData(id);
             if (!fetchedNote) {
-                alert("Note not found");
+                notify("Note not found", { type: "error" });
                 navigate('/');
                 return;
             }
@@ -89,7 +90,7 @@ function Edit({
 
     return (
         <div className="h-full flex flex-col gap-3 p-4 pb-0 overflow-hidden">
-            <div className='grid grid-cols-1 md:grid-cols-4 sm:gap-x-3 gap-x-0 gap-y-2'>
+            <div className='flex flex-wrap sm:flex-nowrap'>
                 <Input
                     type="text"
                     variant="underlined"
@@ -100,7 +101,7 @@ function Edit({
                     onChange={(e) => handleClientDataChange({ title: e.target.value })}
                     readOnly={!(isEditing && canEdit)}
                 />
-                <div className='col-span-2 flex flex-nowrap gap-x-2'>
+                <div className='col-span-1 flex flex-nowrap gap-x-2 items-center'>
                     <Switch
                         size="sm"
                         className='min-w-fit'
@@ -119,36 +120,12 @@ function Edit({
                     >
                         Public
                     </Switch>
-                    <div className='min-w-40 w-full'>
-                        <Select
-                            label="Category"
-                            placeholder="School..."
-                            selectionMode="multiple"
-                            variant='flat'
-                            size='sm'
-                            selectedKeys={clientNote?.tags || []}
-                            onSelectionChange={(e) => handleClientDataChange({ tags: Array.from(e) })}
-                            readOnly={!(isEditing && canEdit)}
-                            isDisabled={!canEdit}
-                        >
-                            <SelectItem
-                                key={"EditTags"}
-                                value={"EditTags"}
-                                textValue="Edit tags"
-                                variant="faded"
-                                startContent={<GetIcon name="Edit" />}
-                                showDivider
-                                href="/tags"
-                            >
-                                Edit Tags
-                            </SelectItem>
-                            {tags?.map((tag) => (
-                                <SelectItem key={tag.id} value={tag.id}>
-                                    {tag.title}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                    </div>
+                    <TagsDropdown
+                        selectedTags={clientNote?.tags || []}
+                        handleSelectedTagsChange={(_tags) =>
+                            handleClientDataChange({ tags: _tags })
+                        }
+                    />
                 </div>
             </div>
 

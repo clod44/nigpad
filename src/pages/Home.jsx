@@ -5,7 +5,7 @@ import Fab from "../components/Fab";
 import { NoteContext } from "../context/NoteContext";
 import { SearchContext } from "../context/SearchContext";
 import { useNavigate } from "react-router-dom";
-
+import { notify } from '../context/ToastContext';
 export default function Home() {
 
     const navigate = useNavigate();
@@ -16,6 +16,7 @@ export default function Home() {
         setFilteredNotes(notes);
     }, [notes]);
 
+
     return (
         <>
             <Fab
@@ -23,15 +24,25 @@ export default function Home() {
                     {
                         tooltip: "New Note",
                         onClick: async () => {
-                            const noteId = await handleCreateNote();
-                            if (!noteId) return;
-                            navigate(`/note/${noteId}`);
+                            try {
+                                const noteId = await handleCreateNote(); // Wait for the promise to resolve
+                                console.log("Created Note ID:", noteId);
+
+                                if (noteId) {
+                                    navigate(`/note/${noteId}`); // Navigate only after the note is created
+                                } else {
+                                    console.error("No note ID returned, unable to navigate.");
+                                }
+                            } catch (error) {
+                                console.error("Error creating note:", error);
+                            }
                         },
                         className: "text-primary",
                         iconName: "NewFile"
                     }
                 ]}
             />
+
             <div className="flex flex-col flex-grow overflow-y-auto">
                 <ScrollShadow hideScrollBar className="w-full flex-grow" size={40}>
                     <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">

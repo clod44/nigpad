@@ -1,49 +1,105 @@
 import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, getDocs, getDoc, query, where, Timestamp } from 'firebase/firestore';
+import { notify } from "../context/ToastContext";
 const db = getFirestore();
 
 export const createTag = async (userId, title = "New Tag") => {
     if (!userId) {
         console.error('No user ID provided');
+        notify('No logged in user found', { type: "error" });
         return;
     }
     const now = Timestamp.now();
     const newData = {
         title: title,
         created: now,
-        color: "ff0000",
+        color: "#333333",
         userId: userId
     };
 
     try {
-        const docRef = await addDoc(collection(db, 'tags'), newData);
+        const docRef = await notify("Creating tag...", {
+            promise: addDoc(collection(db, 'tags'), newData),
+            pending: {
+                render() {
+                    return "Creating tag...";
+                }
+            },
+            success: {
+                render({ data }) {
+                    return `New tag created.`;
+                }
+            },
+            error: {
+                render({ data }) {
+                    return `Failed to create tag: ${data}`;
+                }
+            }
+        })
         return docRef.id;
     } catch (error) {
         console.error('Error creating tag:', error);
+        notify(`Failed to create tag: ${error.message}`, { type: "error" });
     }
 };
 
 export const updateTag = async (id, tag = {
     title: 'Untitled',
-    color: 'ff0000'
+    color: '#333333'
 }) => {
     const noteRef = doc(db, 'tags', id);
     const updatedData = {
-        title: tag.title || 'Untitled',
-        color: tag.color || 'ff0000',
+        title: tag?.title || 'Untitled',
+        color: tag?.color || '#333333',
     };
     try {
-        await updateDoc(noteRef, updatedData);
+        await notify("Updating Tag...", {
+            promise: updateDoc(noteRef, updatedData),
+            pending: {
+                render() {
+                    return "Updating tag...";
+                }
+            },
+            success: {
+                render() {
+                    return `Tag updated.`;
+                }
+            },
+            error: {
+                render({ data }) {
+                    return `Failed to update tag: ${data.message}`;
+                }
+            }
+        })
     } catch (error) {
         console.error('Error updating note:', error);
+        notify(`Failed to update tag: ${error.message}`, { type: "error" });
     }
 };
 
 export const deleteTag = async (id) => {
     const tagRef = doc(db, 'tags', id);
     try {
-        await deleteDoc(tagRef);
+        await notify("Deleting tag...", {
+            promise: deleteDoc(tagRef),
+            pending: {
+                render() {
+                    return "Deleting tag...";
+                }
+            },
+            success: {
+                render() {
+                    return `Tag deleted.`;
+                }
+            },
+            error: {
+                render({ data }) {
+                    return `Failed to delete tag: ${data.message}`;
+                }
+            }
+        })
     } catch (error) {
         console.error('Error deleting tag:', error);
+        notify(`Failed to delete tag: ${error.message}`, { type: "error" });
     }
 };
 
@@ -61,6 +117,7 @@ export const getAllTags = async (userId) => {
         return tags;
     } catch (error) {
         console.error('Error retrieving tags:', error);
+        notify(`Failed to retrieve tags: ${error.message}`, { type: "error" });
     }
 };
 
@@ -79,5 +136,6 @@ export const getTagById = async (id) => {
         }
     } catch (error) {
         console.error('Error retrieving tag:', error);
+        notify(`Failed to retrieve tag: ${error.message}`, { type: "error" });
     }
 };

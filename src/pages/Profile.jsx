@@ -3,6 +3,7 @@ import { signOut } from 'firebase/auth';
 import useAuth from "../hooks/useAuth";
 import { Divider, Tabs, Tab, Avatar, Button, Card, CardBody, CardFooter, Input } from '@nextui-org/react';
 import { updateDisplayName } from '../services/userService';
+import { logout } from '../services/authService';
 
 export default function Profile() {
     const { auth, user } = useAuth();
@@ -17,24 +18,11 @@ export default function Profile() {
     }, [user]);
 
     const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            console.log("User signed out");
-        } catch (error) {
-            console.error("Error signing out: ", error);
-        }
+        await logout();
     };
 
     const handleSaveProfileChanges = async () => {
-        if (!name || name?.trim().length === 0) {
-            alert("Please enter a valid new name");
-        }
-        try {
-            await updateDisplayName(name);
-            console.log("Profile updated successfully");
-        } catch (error) {
-            console.error("Error updating profile: ", error);
-        }
+        await updateDisplayName(name);
     }
     return (
         <>

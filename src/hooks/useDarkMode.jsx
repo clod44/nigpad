@@ -6,17 +6,14 @@ const useDarkMode = () => {
 
     useEffect(() => {
         setCurrentThemeIcon(isDarkMode ? 'Moon' : 'Sun');
+        document.documentElement.classList.toggle('dark', isDarkMode);
     }, [isDarkMode]);
+
     const toggleDarkMode = () => {
         const newMode = !isDarkMode;
         setIsDarkMode(newMode);
-        document.documentElement.classList.toggle('dark', newMode);
         localStorage.setItem('dark-mode', newMode);
     };
-
-    useEffect(() => {
-        document.documentElement.classList.toggle('dark', isDarkMode);
-    }, []); // Runs once to sync mode on load
 
     return {
         isDarkMode,
@@ -24,4 +21,5 @@ const useDarkMode = () => {
         currentThemeIconName
     };
 };
+
 export default useDarkMode;
