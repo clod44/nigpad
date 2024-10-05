@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { debounce } from 'lodash';
-import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow } from "@nextui-org/react";
+import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow, Chip } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import GetIcon from "../icons/GetIcon";
 import ReactMarkdown from 'react-markdown';
@@ -143,7 +143,14 @@ function Edit({
                                 Edit Tags
                             </SelectItem>
                             {tags?.map((tag) => (
-                                <SelectItem key={tag.id} value={tag.id}>
+                                <SelectItem
+                                    key={tag.id}
+                                    value={tag.id}
+                                    variant='flat'
+                                    startContent={
+                                        <Chip size="sm" style={{ backgroundColor: tag?.color || '#333333' }} variant='bordered'> </Chip>
+                                    }
+                                >
                                     {tag.title}
                                 </SelectItem>
                             ))}

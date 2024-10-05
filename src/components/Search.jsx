@@ -1,4 +1,4 @@
-import { Input, Spinner, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import { Input, Spinner, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Chip } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
 import { NoteContext } from "../context/NoteContext";
 import { SearchContext } from "../context/SearchContext";
@@ -59,7 +59,13 @@ export default function Search({
                                     <p className="font-bold">Edit Tags</p>
                                 </DropdownItem>
                                 {tags?.map((tag) => (
-                                    <DropdownItem key={tag.id} value={tag.id}>
+                                    <DropdownItem
+                                        key={tag.id}
+                                        value={tag.id}
+                                        startContent={
+                                            <Chip size="sm" style={{ backgroundColor: tag?.color || '#333333' }} variant='bordered'> </Chip>
+                                        }
+                                    >
                                         {tag.title}
                                     </DropdownItem>
                                 ))}

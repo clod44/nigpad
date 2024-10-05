@@ -1,5 +1,6 @@
 import { formatTimestamp } from "../utils/dateUtils";
 import { Card, CardBody, CardFooter, Divider, ScrollShadow, Chip } from "@nextui-org/react";
+
 import { Link } from 'react-router-dom';
 import NoteCardMore from "./NoteCardMore";
 import Markdown from "react-markdown";
@@ -10,9 +11,11 @@ function NoteCard({
     tags,
     ...props
 }) {
+
     if (!note) {
         return null;
     }
+
     const selectedTags = note.tags && note.tags.length > 0 && tags && tags.length > 0
         ? tags.filter(tag => note.tags.includes(tag.id))
         : [];
@@ -35,11 +38,17 @@ function NoteCard({
                                 <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={10}>
                                     <p className="text-md text-nowrap">{note.title}</p>
                                     <p className="text-xs text-default-500 text-nowrap col-span-1">{formatTimestamp(note.created?.toDate())}</p>
-                                    <div className="flex flex-nowrap mt-1">
+                                    <div className="flex flex-nowrap mt-1 gap-1">
                                         {selectedTags.map((tag) => {
-                                            console.log("CHIP", tag);
                                             return (
-                                                <Chip key={tag.id} size="sm" variant="dot" className="text-xs text-nowrap">
+                                                <Chip
+                                                    key={tag.id}
+                                                    size="sm"
+                                                    variant="bordered"
+                                                    className="text-xs text-nowrap border"
+                                                    style={{
+                                                        borderColor: `${tag?.color || '#333333'}`,
+                                                    }} >
                                                     {tag.title}
                                                 </Chip>
                                             );
@@ -53,7 +62,7 @@ function NoteCard({
                     <NoteCardMore id={note.id} handleDeleteNote={handleDeleteNote} />
                 </div>
             </CardFooter>
-        </Card>
+        </Card >
     );
 }
 
