@@ -1,8 +1,7 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { debounce } from 'lodash';
-import { Textarea, Input, Select, SelectItem, Switch, ScrollShadow, Chip } from "@nextui-org/react";
+import { Textarea, Input, Switch, ScrollShadow } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
-import GetIcon from "../icons/GetIcon";
 import TagsDropdown from "../components/TagsDropdown";
 import ReactMarkdown from 'react-markdown';
 import { getNoteById } from '../services/noteService';

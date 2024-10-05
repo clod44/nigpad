@@ -1,9 +1,9 @@
 import { Input, Spinner } from "@nextui-org/react";
 import GetIcon from "../icons/GetIcon";
-import { NoteContext } from "../context/NoteContext";
 import { SearchContext } from "../context/SearchContext";
 import { useContext } from "react";
 import TagsDropdown from "./TagsDropdown";
+
 export default function Search({
     ...props
 }) {
