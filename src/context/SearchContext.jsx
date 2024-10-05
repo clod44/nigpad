@@ -64,8 +64,7 @@ export const SearchProvider = ({ children }) => {
         debouncedFilterNotes(value);
     };
 
-    const handleSelectedTagsChange = (e) => {
-        const newTagsArray = Array.from(e);
+    const handleSelectedTagsChange = (newTagsArray) => {
         setSelectedTags(newTagsArray);
         setIsLoading(true);
     };
