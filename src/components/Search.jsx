@@ -1,5 +1,5 @@
 import { Input, Spinner } from "@nextui-org/react";
-import GetIcon from "../icons/GetIcon";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { SearchContext } from "../context/SearchContext";
 import { useContext } from "react";
 import TagsDropdown from "./TagsDropdown";
@@ -33,7 +33,7 @@ export default function Search({
                             {isLoading ? (
                                 <Spinner size="sm" className="text-2xl text-default-400 flex-shrink-0" />
                             ) : (
-                                <GetIcon name="Search" className="text-2xl text-default-400 pointer-events-none flex-shrink-0 p-0" />
+                                <MagnifyingGlassIcon className="siz-6 text-default-400 pointer-events-none flex-shrink-0 p-0" />
                             )}
                         </div>
                     </div>
