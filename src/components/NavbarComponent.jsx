@@ -18,7 +18,7 @@ function NavbarComponent({
 
     const navigate = useNavigate();
 
-
+    const isHomePage = window.location.pathname === "/";
 
 
     return (
@@ -39,9 +39,11 @@ function NavbarComponent({
                 </NavbarContent>
 
                 <NavbarContent as="div" justify="end">
-                    <NavbarItem>
-                        <Search />
-                    </NavbarItem>
+                    {isHomePage && (
+                        <NavbarItem>
+                            <Search />
+                        </NavbarItem>
+                    )}
                     <Dropdown placement="bottom-end" className="border border-foreground-300">
                         <DropdownTrigger>
                             <Avatar
