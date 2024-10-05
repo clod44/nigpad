@@ -6,6 +6,7 @@ import TagsDropdown from "../components/TagsDropdown";
 import ReactMarkdown from 'react-markdown';
 import { getNoteById } from '../services/noteService';
 import { NoteContext } from '../context/NoteContext';
+import { notify } from '../context/ToastContext';
 
 function Edit({
     ...props
@@ -30,20 +31,20 @@ function Edit({
         //the note editing wont work due to permissions but we also disable the ui.
         setCanEdit(false);
         setIsEditing(false);
-        alert("You are viewing a stranger's public note.");
+        notify("You are viewing a stranger's public note.");
         return await getNoteById(noteId);
     };
 
     useEffect(() => {
         const fetchNoteData = async () => {
             if (!id) {
-                alert("Note not found");
+                notify("Note not found", { type: "error" });
                 navigate('/');
                 return;
             }
             const fetchedNote = await acquireNoteData(id);
             if (!fetchedNote) {
-                alert("Note not found");
+                notify("Note not found", { type: "error" });
                 navigate('/');
                 return;
             }

@@ -2,6 +2,7 @@ import { useState, useEffect, createContext } from 'react';
 import { createNote, updateNote, deleteNote, getAllNotes } from '../services/noteService';
 import { createTag, updateTag, deleteTag, getAllTags } from '../services/tagService';
 import useAuth from '../hooks/useAuth';
+import { notify } from "../context/ToastContext";
 
 export const NoteContext = createContext();
 
@@ -25,16 +26,18 @@ export const NoteProvider = ({ children }) => {
         }
     }, [user, userLoading]);
 
-    // Handlers for notes
     const [canCreateNote, setCanCreateNote] = useState(true);
     const handleCreateNote = async () => {
         if (!canCreateNote) return;
         setCanCreateNote(false);
-        const noteId = await createNote(user.uid);
-        await updateNotes();
+        const noteId = await createNote(user?.uid);
+        if (noteId) {
+            await updateNotes();
+        }
         setCanCreateNote(true);
         return noteId;
     };
+
 
     const handleUpdateNote = async (id, data) => {
         await updateNote(id, data);
@@ -48,7 +51,7 @@ export const NoteProvider = ({ children }) => {
 
     // Handlers for tags
     const handleCreateTag = async (title = 'New Tag') => {
-        const tagId = await createTag(user.uid, title);
+        const tagId = await createTag(user?.uid, title);
         await updateNotes();
         return tagId;
     };

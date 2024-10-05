@@ -1,4 +1,5 @@
 import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, getDocs, getDoc, query, where, Timestamp } from 'firebase/firestore';
+import { notify } from "../context/ToastContext";
 const db = getFirestore();
 //firebase rules:
 //prevents anybody from creating, updating or deleting any note which is not their
@@ -7,8 +8,10 @@ const db = getFirestore();
 export const createNote = async (userId) => {
     if (!userId) {
         console.error('No user ID provided');
+        notify('No logged in user found.');
         return;
     }
+
     const now = Timestamp.now();
     const noteData = {
         title: "Untitled",
@@ -21,14 +24,34 @@ export const createNote = async (userId) => {
         public: false,
     };
 
-    console.log('Creating note:', noteData);
     try {
-        const docRef = await addDoc(collection(db, 'notes'), noteData);
-        return docRef.id;
+        const docRef = await notify('Creating note...', {
+            promise: addDoc(collection(db, 'notes'), noteData),
+            pending: {
+                render() {
+                    return "Creating note...";
+                }
+            },
+            success: {
+                render({ data }) {
+                    return `New note created.`;
+                }
+            },
+            error: {
+                render({ data }) {
+                    return `Failed to create note: ${data.message}`;
+                }
+            }
+        });
+
+        return docRef?.id;
     } catch (error) {
         console.error('Error creating note:', error);
+        notify(`Failed to create note: ${error.message}`, { type: "error" });
     }
 };
+
+
 
 export const updateNote = async (id, note = {
     title: 'Untitled',
@@ -51,15 +74,35 @@ export const updateNote = async (id, note = {
         await updateDoc(noteRef, updatedData);
     } catch (error) {
         console.error('Error updating note:', error);
+        notify(`Failed to update note: ${error.message}`, { type: "error" });
     }
 };
 
 export const deleteNote = async (id) => {
     const noteRef = doc(db, 'notes', id);
     try {
-        await deleteDoc(noteRef);
+        await notify("Deleting Note...", {
+            promise: deleteDoc(noteRef),
+            pending: {
+                render() {
+                    return "Deleting note...";
+                }
+            },
+            success: {
+                render() {
+                    return `Note deleted.`;
+                }
+            },
+            error: {
+                render({ data }) {
+                    return `Failed to delete note: ${data.message}`;
+                }
+            }
+
+        });
     } catch (error) {
         console.error('Error deleting note:', error);
+        notify(`Failed to delete note: ${error.message}`, { type: "error" });
     }
 };
 export const getAllNotes = async (userId) => {
@@ -76,6 +119,7 @@ export const getAllNotes = async (userId) => {
         return notes;
     } catch (error) {
         console.error('Error retrieving notes:', error);
+        notify(`Failed to retrieve notes: ${error.message}`, { type: "error" });
     }
 };
 
@@ -93,5 +137,6 @@ export const getNoteById = async (id) => {
         }
     } catch (error) {
         console.error('Error retrieving note:', error);
+        notify(`Failed to retrieve note: ${error.message}`, { type: "error" });
     }
 };
