@@ -6,6 +6,7 @@ import ConfirmationModal from "./ConfirmationModal";
 import useDarkMode from '../hooks/useDarkMode';
 import useAuth from "../hooks/useAuth";
 import Search from "./Search";
+import NavbarNoteOptions from "./NavbarNoteOptions";
 
 function NavbarComponent({
     handleCreateNote,
@@ -19,31 +20,42 @@ function NavbarComponent({
     const navigate = useNavigate();
 
     const isHomePage = window.location.pathname === "/";
+    const isEditPage = window.location.pathname.includes("/note/");
 
 
     return (
         <>
             <Navbar
                 isBordered
-                variant="fixed"
-                className="shadow"
+                className="shadow flex gap-0"
+                maxWidth="full"
             >
-
-                <NavbarContent className="gap-4" justify="center">
+                <NavbarContent className="gap-2 flex-shrink w-auto" justify="start">
                     <NavbarBrand>
-                        <Link to="/" className=" tracking-wide hover:tracking-widest duration-200 transition-all flex flex-nowrap items-center text-primary">
-                            <HomeIcon className="size-6 text-primary" />
-                            <p className="ms-2 font-bold text-inherit text-lg metallic-text">NIGPAD</p>
+                        <Link to="/" className=" tracking-wide flex flex-nowrap items-center text-primary">
+                            <Button isIconOnly variant="faded">
+                                <HomeIcon className="size-6 text-primary" />
+                            </Button>
+                            <p className="ms-2 text-inherit text-lg hidden sm:flex">NIGPAD</p>
                         </Link>
                     </NavbarBrand>
                 </NavbarContent>
 
-                <NavbarContent as="div" justify="end">
+                <NavbarContent justify="center" className="flex-grow w-full">
                     {isHomePage && (
                         <NavbarItem>
                             <Search />
                         </NavbarItem>
                     )}
+                    {isEditPage && (
+                        <NavbarItem className="w-full">
+                            <NavbarNoteOptions />
+                        </NavbarItem>
+                    )}
+
+
+                </NavbarContent>
+                <NavbarContent justify="end" className="flex-shrink w-auto">
                     <Dropdown placement="bottom-end" className="border border-foreground-300">
                         <DropdownTrigger>
                             <Avatar
@@ -80,7 +92,7 @@ function NavbarComponent({
                             <DropdownItem key="about" onClick={() => setIsAboutModalOpen(true)}>About</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                </NavbarContent>
+                </NavbarContent >
             </Navbar >
 
             <ConfirmationModal

@@ -5,9 +5,8 @@ import Fab from "../components/Fab";
 import { NoteContext } from "../context/NoteContext";
 import { SearchContext } from "../context/SearchContext";
 import { useNavigate } from "react-router-dom";
-import { notify } from '../context/ToastContext';
-export default function Home() {
 
+export default function Home() {
     const navigate = useNavigate();
     const { notes, tags, handleDeleteNote, handleCreateNote } = useContext(NoteContext);
     const { filteredNotes, setFilteredNotes } = useContext(SearchContext);
@@ -25,11 +24,11 @@ export default function Home() {
                         tooltip: "New Note",
                         onClick: async () => {
                             try {
-                                const noteId = await handleCreateNote(); // Wait for the promise to resolve
+                                const noteId = await handleCreateNote();
                                 console.log("Created Note ID:", noteId);
 
                                 if (noteId) {
-                                    navigate(`/note/${noteId}`); // Navigate only after the note is created
+                                    navigate(`/note/${noteId}`);
                                 } else {
                                     console.error("No note ID returned, unable to navigate.");
                                 }
