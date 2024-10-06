@@ -1,23 +1,42 @@
 import { useState, useEffect, createContext } from 'react';
-import { updateNote, deleteNote } from '../services/noteService';
+import { updateNote, deleteNote, getNoteById } from '../services/noteService';
 import useAuth from '../hooks/useAuth';
+import { notify } from "../context/ToastContext";
 
 export const CurrentNoteContext = createContext();
 
 export const CurrentNoteProvider = ({ children }) => {
     const [currentNote, setCurrentNote] = useState(null);
     const [showMarkdown, setShowMarkdown] = useState(false);
-    const { user, userLoading } = useAuth();
+    const { user } = useAuth();
 
-    const SetCurrentNoteId = (id) => {
-        if (!id) return;
-        const note = user?.notes?.find((note) => note.id === id);
-        setCurrentNote(note);
+    const SetNewCurrentNoteWithId = async (id) => {
+        const fetchedNote = await getNoteById(id);
+        if (fetchedNote) {
+            if (user?.uid !== fetchedNote?.userId) {
+                notify("You are viewing a stranger's public note.");
+            }
+            setCurrentNote(fetchedNote);
+        } else {
+            notify("Note not found", { type: "error" });
+        }
     };
 
-    const UpdateCurrentNote = async (data) => {
+    const UpdateCurrentNote = (data) => {
+        setCurrentNote((prevNote) => ({
+            ...prevNote,
+            ...data,
+        }));
+    };
+
+    useEffect(() => {
+        if (!currentNote) return;
+        UpdateServerNote();
+    }, [currentNote]);
+
+    const UpdateServerNote = async () => {
         if (!currentNote || !user) return;
-        await updateNote(currentNote?.id, data);
+        await updateNote(currentNote?.id, currentNote);
     };
 
     const DeleteCurrentNote = async () => {
@@ -26,7 +45,16 @@ export const CurrentNoteProvider = ({ children }) => {
     };
 
     return (
-        <CurrentNoteContext.Provider value={{ currentNote, setCurrentNote, UpdateCurrentNote, DeleteCurrentNote, showMarkdown, setShowMarkdown }}>
+        <CurrentNoteContext.Provider value={{
+            currentNote,
+            setCurrentNote,
+            UpdateCurrentNote,
+            UpdateServerNote,
+            DeleteCurrentNote,
+            showMarkdown,
+            setShowMarkdown,
+            SetNewCurrentNoteWithId
+        }}>
             {children}
         </CurrentNoteContext.Provider>
     );

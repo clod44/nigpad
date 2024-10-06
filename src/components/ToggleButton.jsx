@@ -14,14 +14,20 @@ export default function ToggleButton({
 
     useEffect(() => {
         setIsToggled(value);
-    }, [value])
+    }, [value]);
+
+    const handleToggle = () => {
+        const newValue = !isToggled;
+        setIsToggled(newValue);
+        onChange(newValue);
+    };
 
     return (
         <Button
-            onClick={() => setIsToggled(prev => !prev)}
+            onClick={handleToggle}
             isDisabled={isDisabled}
             startContent={icon}
-            isIconOnly={label ? false : true}
+            isIconOnly={!label}
             color={isToggled ? "primary" : "default"}
             variant={isToggled ? "shadow" : "faded"}
         >

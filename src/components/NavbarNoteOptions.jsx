@@ -1,4 +1,4 @@
-import { Input, Tooltip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Link, Checkbox, CheckboxGroup, ScrollShadow } from "@nextui-org/react";
+import { Input, Tooltip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Badge, Checkbox, CheckboxGroup, ScrollShadow } from "@nextui-org/react";
 import { GlobeAmericasIcon, Cog6ToothIcon, LinkIcon, SparklesIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 import ToggleButton from "./ToggleButton";
 import { NoteContext } from "../context/NoteContext";
@@ -12,7 +12,13 @@ export default function NavbarNoteOptions() {
 
     const navigate = useNavigate();
 
-    const { currentNote, setCurrentNote, UpdateCurrentNote, DeleteCurrentNote, showMarkdown, setShowMarkdown } = useContext(CurrentNoteContext);
+    const {
+        currentNote,
+        UpdateCurrentNote,
+        DeleteCurrentNote,
+        showMarkdown,
+        setShowMarkdown
+    } = useContext(CurrentNoteContext);
 
 
     return (
@@ -23,22 +29,36 @@ export default function NavbarNoteOptions() {
                 placeholder="Title"
                 variant="faded"
                 color="primary"
-                defaultValue={currentNote?.title || ''}
+                value={currentNote?.title || ''}
                 onChange={(e) => UpdateCurrentNote({ ...currentNote, title: e.target.value })}
+                isReadOnly={showMarkdown}
             />
 
             <Dropdown
                 className="max-w-60 p-0">
+                <Badge
+                    isOneChar
+                    content={"!"}
+                    color="primary"
+                    shape="circle"
+                    placement="top-right"
+                    showOutline={false}
+                    size="sm"
+                    variant="shadow"
+                    isInvisible={!showMarkdown}
+                    onClick={(e) => e.stopPropagation()}
 
-                <DropdownTrigger>
-                    <Button
-                        variant="faded"
-                        isIconOnly
-                        color="primary"
-                    >
-                        <Cog6ToothIcon className="size-6" />
-                    </Button>
-                </DropdownTrigger>
+                >
+                    <DropdownTrigger>
+                        <Button
+                            variant="faded"
+                            isIconOnly
+                            color="primary"
+                        >
+                            <Cog6ToothIcon className="size-6" />
+                        </Button>
+                    </DropdownTrigger>
+                </Badge>
                 <DropdownMenu>
                     <DropdownItem
                         key="options"
@@ -75,7 +95,8 @@ export default function NavbarNoteOptions() {
                                 <div>
                                     <ToggleButton
                                         icon={<GlobeAmericasIcon className="size-6" />}
-                                        onChange={(e) => UpdateCurrentNote({ ...currentNote, public: e.target.checked })}
+                                        value={currentNote?.public}
+                                        onChange={(val) => UpdateCurrentNote({ ...currentNote, public: val })}
                                     />
                                 </div>
                             </Tooltip>
@@ -87,10 +108,23 @@ export default function NavbarNoteOptions() {
                                 showArrow={true}
                             >
                                 <div>
-                                    <ToggleButton
-                                        icon={<SparklesIcon className="size-6" />}
-                                        onChange={(e) => setShowMarkdown(e.target.checked)}
-                                    />
+                                    <Badge
+                                        isOneChar
+                                        content={"!"}
+                                        color="primary"
+                                        shape="circle"
+                                        placement="top-right"
+                                        showOutline={false}
+                                        size="sm"
+                                        variant="shadow"
+                                        isInvisible={!showMarkdown}
+                                    >
+                                        <ToggleButton
+                                            icon={<SparklesIcon className="size-6" />}
+                                            value={showMarkdown}
+                                            onChange={(val) => setShowMarkdown(val)}
+                                        />
+                                    </Badge>
                                 </div>
                             </Tooltip>
                         </div>
