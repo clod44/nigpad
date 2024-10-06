@@ -40,10 +40,8 @@ function NoteCard({
                                                     key={tag.id}
                                                     size="sm"
                                                     variant="bordered"
-                                                    className="text-xs text-nowrap border"
-                                                    style={{
-                                                        borderColor: `${tag?.color || '#333333'}`,
-                                                    }} >
+                                                    color={tag.color || "default"}
+                                                    className="text-xs text-nowrap border">
                                                     {tag.title}
                                                 </Chip>
                                             );

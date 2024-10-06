@@ -12,7 +12,7 @@ export const createTag = async (userId, title = "New Tag") => {
     const newData = {
         title: title,
         created: now,
-        color: "#333333",
+        color: "default",
         userId: userId
     };
 
@@ -44,12 +44,12 @@ export const createTag = async (userId, title = "New Tag") => {
 
 export const updateTag = async (id, tag = {
     title: 'Untitled',
-    color: '#333333'
+    color: 'default'
 }) => {
     const noteRef = doc(db, 'tags', id);
     const updatedData = {
         title: tag?.title || 'Untitled',
-        color: tag?.color || '#333333',
+        color: tag?.color || 'default',
     };
     try {
         await notify("Updating Tag...", {

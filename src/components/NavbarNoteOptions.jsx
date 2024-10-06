@@ -167,7 +167,7 @@ export default function NavbarNoteOptions() {
                                     >
                                         {tags.map((tag) => {
                                             return (
-                                                <Checkbox key={tag.id} value={tag.id} size="sm" className="whitespace-normal w-full overflow-wrap break-word">
+                                                <Checkbox color={tag.color || "default"} key={tag.id} value={tag.id} size="sm" className="whitespace-normal w-full overflow-wrap break-word">
                                                     {tag.title}
                                                 </Checkbox>
                                             );

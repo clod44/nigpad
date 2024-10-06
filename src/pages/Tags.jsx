@@ -1,20 +1,28 @@
-import { useState, useContext, useRef } from 'react';
-import { Chip, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useState, useContext } from 'react';
+import { Chip, Select, SelectItem, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { PencilSquareIcon, TrashIcon, SwatchIcon } from '@heroicons/react/24/outline';
 import { NoteContext } from '../context/NoteContext';
+
+// Define the tag colors outside the Tags component
+const tagColors = [
+    "primary",
+    "secondary",
+    "success",
+    "warning",
+    "danger",
+    "default"
+];
 
 function Tags({
     ...props
 }) {
-
     const { tags, handleCreateTag, handleUpdateTag, handleDeleteTag } = useContext(NoteContext);
-
     const [newTagTitle, setNewTagTitle] = useState('');
     const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalClose } = useDisclosure();
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalClose } = useDisclosure();
     const [editingTag, setEditingTag] = useState(null);
 
-    const inputColorRef = useRef();
+    const [selectedColor, setSelectedColor] = useState(tagColors.includes(editingTag?.color) ? editingTag.color : 'default');
 
 
     const handleAddTag = () => {
@@ -30,7 +38,8 @@ function Tags({
     };
 
     const SaveTagPressed = () => {
-        handleUpdateTag(editingTag?.id, { ...editingTag, color: inputColorRef.current.value });
+        console.log(selectedColor);
+        handleUpdateTag(editingTag?.id, { ...editingTag, color: selectedColor });
         onEditModalClose();
     };
 
@@ -43,7 +52,6 @@ function Tags({
         handleDeleteTag(tag?.id);
         onDeleteModalClose();
     };
-
 
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">
@@ -75,8 +83,9 @@ function Tags({
                             <TableRow key={tag.id}>
                                 <TableCell className='p-0'>
                                     <div className='flex justify-center items-center'>
-                                        <Chip size="sm" style={{ backgroundColor: tag?.color || '#333333' }} variant='bordered'> </Chip>
-                                    </div>                                </TableCell>
+                                        <Chip size="sm" className={`bg-${tagColors.includes(tag?.color) ? tag?.color : 'default'}`}> </Chip>
+                                    </div>
+                                </TableCell>
                                 <TableCell className='items-center'>
                                     <p className='text-pretty'>{tag.title}</p>
                                 </TableCell>
@@ -102,11 +111,8 @@ function Tags({
                 <Spacer y={10} />
             </ScrollShadow>
 
-
-
-
             {/* Edit Tag Modal */}
-            < Modal isOpen={isEditModalOpen} onOpenChange={onEditModalClose} >
+            <Modal isOpen={isEditModalOpen} onOpenChange={onEditModalClose}>
                 <ModalContent>
                     {(onClose) => (
                         <>
@@ -121,16 +127,31 @@ function Tags({
                                     size="lg"
                                     className='w-full'
                                 />
-                                <Input
-                                    defaultValue={editingTag.color || '#000000'}
-                                    ref={inputColorRef}
-                                    label="Color:"
-                                    labelPlacement='inside'
-                                    size="lg"
-                                    type='color'
-                                    className='w-full'
-                                />
-
+                                <Select
+                                    isRequired
+                                    selectionMode="single"
+                                    label="Color"
+                                    placeholder="Primary"
+                                    className={`w-full`}
+                                    variant='bordered'
+                                    defaultSelectedKeys={[selectedColor]}
+                                    onSelectionChange={(color) => {
+                                        setSelectedColor(Array.isArray(color) ? color[0] : Object.values(color)[0]);
+                                    }}
+                                >
+                                    {tagColors.map((color) => (
+                                        <SelectItem
+                                            key={color}
+                                            value={color}
+                                            startContent={
+                                                <SwatchIcon className={`size-6 text-${color}`} />
+                                            }
+                                            className={`text-${color}`}
+                                        >
+                                            {color}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>
