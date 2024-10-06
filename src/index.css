@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.metallic-text {
-    background: linear-gradient(180deg, theme('colors.primary-500') 50%, theme('colors.background') 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
 .hide-scroll {
     scrollbar-width: none;
     /* Hide scrollbar in Firefox */

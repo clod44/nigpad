@@ -6,6 +6,7 @@ import TagsDropdown from "../components/TagsDropdown";
 import ReactMarkdown from 'react-markdown';
 import { getNoteById } from '../services/noteService';
 import { NoteContext } from '../context/NoteContext';
+import { CurrentNoteContext } from '../context/CurrentNoteContext';
 import { notify } from '../context/ToastContext';
 
 function Edit({
@@ -13,6 +14,7 @@ function Edit({
 }) {
 
     const { notes, tags, handleUpdateNote, handleDeleteNote } = useContext(NoteContext);
+    const { setCurrentNote } = useContext(CurrentNoteContext);
 
     const navigate = useNavigate();
     const { id } = useParams();
@@ -48,17 +50,17 @@ function Edit({
                 navigate('/');
                 return;
             }
+            setCurrentNote(fetchedNote);
             setServerNote(fetchedNote);
         };
         fetchNoteData();
     }, [id]);
 
     useEffect(() => {
-        if (serverNote) {
-            //purify the note's tags from old or undefined tags:
-            const validTags = serverNote.tags?.filter(tagId => tags?.some(tag => tag.id === tagId)) || [];
-            setClientNote({ ...serverNote, tags: validTags });
-        }
+        if (!serverNote) return;
+        //purify the note's tags from old or undefined tags:
+        const validTags = serverNote.tags?.filter(tagId => tags?.some(tag => tag.id === tagId)) || [];
+        setClientNote({ ...serverNote, tags: validTags });
     }, [serverNote]);
 
 

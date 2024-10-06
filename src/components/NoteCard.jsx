@@ -1,9 +1,10 @@
 import { formatTimestamp } from "../utils/dateUtils";
-import { Card, CardBody, CardFooter, Divider, ScrollShadow, Chip } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, ScrollShadow, Chip } from "@nextui-org/react";
 
 import { Link } from 'react-router-dom';
 import NoteCardMore from "./NoteCardMore";
 import Markdown from "react-markdown";
+import { useState } from "react";
 
 function NoteCard({
     handleDeleteNote,
@@ -15,29 +16,23 @@ function NoteCard({
     if (!note) {
         return null;
     }
+    const [hovering, setHovering] = useState(true);
 
     const selectedTags = note.tags && note.tags.length > 0 && tags && tags.length > 0
         ? tags.filter(tag => note.tags.includes(tag.id))
         : [];
 
+
     return (
-        <Card className="bg-background border-t-1 border-r-1 border-default shadow-md duration-300 hover:brightness-125" isFooterBlurred>
-            <Divider />
-            <CardBody className="min-h-32 max-h-60">
-                <ScrollShadow hideScrollBar className="w-full h-full" size={40}>
-                    <Markdown className="markdown">
-                        {note?.content.substring(0, 600) + (note.content?.length > 600 ? '...' : '')}
-                    </Markdown>
-                </ScrollShadow>
-            </CardBody>
-            <CardFooter className="bg-background dark:bg-transparent justify-between border-default border-1 overflow-hidden py-1 pe-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow ml-1 z-10">
-                <div className="w-full flex flex-nowrap items-center">
-                    <div className="flex flex-col flex-nowrap flex-grow">
-                        <div className="w-full grid grid-cols-12">
-                            <Link to={`/note/${note.id}`} className="col-span-12 text-primary hover:text-foreground hover:py-2 duration-300">
-                                <ScrollShadow hideScrollBar orientation="horizontal" className="w-full" size={10}>
-                                    <p className="text-md text-nowrap">{note.title}</p>
-                                    <p className="text-xs text-default-500 text-nowrap col-span-1">{formatTimestamp(note.created?.toDate())}</p>
+        <Card className="bg-default-50 border border-default shadow-md duration-300 hover:border-primary" isFooterBlurred onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
+            <CardHeader className="pe-1">
+                <div className="w-full flex flex-nowrap items-center justify-between pe-0">
+                    <div className="flex flex-col flex-nowrap flex-grow overflow-hidden">
+                        <Link to={`/note/${note.id}`} className="text-primary hover:text-foreground duration-200 transition-all">
+                            <ScrollShadow hideScrollBar orientation="horizontal" size={10} className="w-full h-full">
+                                <p className="text-md text-nowrap">{note.title && note.title.length > 0 ? note.title : 'Untitled'}</p>
+                                <div className={`transition-all duration-200 ${hovering ? 'max-h-12' : 'max-h-0'}`}>
+                                    <p className="text-xs text-default-500 text-nowrap">{formatTimestamp(note.created?.toDate())}</p>
                                     <div className="flex flex-nowrap mt-1 gap-1">
                                         {selectedTags.map((tag) => {
                                             return (
@@ -54,14 +49,22 @@ function NoteCard({
                                             );
                                         })}
                                     </div>
-
-                                </ScrollShadow>
-                            </Link>
-                        </div>
+                                </div>
+                            </ScrollShadow>
+                        </Link>
                     </div>
                     <NoteCardMore id={note.id} handleDeleteNote={handleDeleteNote} />
                 </div>
-            </CardFooter>
+            </CardHeader>
+            <Divider />
+            <CardBody className="min-h-32 max-h-60 relative overflow-hidden pb-0">
+                <div className="w-full h-full">
+                    <Markdown className="markdown">
+                        {note?.content.substring(0, 600) + (note.content?.length > 600 ? '...' : '')}
+                    </Markdown>
+                </div>
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-default-50 pointer-events-none"></div>
+            </CardBody>
         </Card >
     );
 }

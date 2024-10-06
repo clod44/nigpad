@@ -12,27 +12,29 @@ import StatusBar from './components/StatusBar.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
 import { NoteProvider } from './context/NoteContext.jsx';
 import { SearchProvider } from './context/SearchContext.jsx';
+import { CurrentNoteProvider } from './context/CurrentNoteContext.jsx';
 
 export default function App() {
     return (
         <main className='text-foreground bg-background'>
-            <div className='w-full h-dvh overflow-hidden flex flex-col from-foreground-300 dark:from-background to-primary-100 dark:to-primary-50 bg-gradient-to-br'>
+            <div className='w-full h-dvh overflow-hidden flex flex-col'>
                 <Router>
                     <ToastProvider>
                         <AuthListener>
                             <NoteProvider>
-                                <SearchProvider>
-                                    <NavbarComponent />
-                                    <Routes>
-                                        <Route path="/" element={<Home />} />
-                                        <Route path="/note/:id" element={<Edit />} />
-                                        <Route path="/tags" element={<Tags />} />
-                                        <Route path="/profile" element={<Profile />} />
-                                        <Route path="/login" element={<Login />} />
-                                        <Route path="*" element={<NotFound />} />
-                                    </Routes>
-                                    <StatusBar />
-                                </SearchProvider>
+                                <CurrentNoteProvider>
+                                    <SearchProvider>
+                                        <NavbarComponent />
+                                        <Routes>
+                                            <Route path="/" element={<Home />} />
+                                            <Route path="/note/:id" element={<Edit />} />
+                                            <Route path="/tags" element={<Tags />} />
+                                            <Route path="/profile" element={<Profile />} />
+                                            <Route path="/login" element={<Login />} />
+                                            <Route path="*" element={<NotFound />} />
+                                        </Routes>
+                                    </SearchProvider>
+                                </CurrentNoteProvider>
                             </NoteProvider>
                         </AuthListener>
                     </ToastProvider>
