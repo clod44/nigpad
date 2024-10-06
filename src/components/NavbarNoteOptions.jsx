@@ -1,10 +1,11 @@
 import { Input, Tooltip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Badge, Checkbox, CheckboxGroup, ScrollShadow } from "@nextui-org/react";
-import { GlobeAmericasIcon, Cog6ToothIcon, LinkIcon, SparklesIcon, PaperClipIcon } from "@heroicons/react/24/outline";
+import { GlobeAmericasIcon, Cog6ToothIcon, LinkIcon, SparklesIcon, PaperClipIcon, TrashIcon } from "@heroicons/react/24/outline";
 import ToggleButton from "./ToggleButton";
 import { NoteContext } from "../context/NoteContext";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CurrentNoteContext } from "../context/CurrentNoteContext";
+import { notify } from "../context/ToastContext";
 
 
 export default function NavbarNoteOptions() {
@@ -80,6 +81,15 @@ export default function NavbarNoteOptions() {
                                         isIconOnly
                                         color="primary"
                                         className="border-default hover:border-primary bg-default-100"
+                                        onClick={() => {
+                                            try {
+                                                navigator.clipboard.writeText(window.location.href)
+                                                notify("Link copied")
+                                            } catch (e) {
+                                                console.log(e)
+                                                notify("Failed to copy link", { type: "error" })
+                                            }
+                                        }}
                                     >
                                         <LinkIcon className="size-6 text-foreground" />
                                     </Button>
@@ -87,8 +97,8 @@ export default function NavbarNoteOptions() {
                             </Tooltip>
 
                             <Tooltip
-                                content="Toggle Public Access"
-                                color="primary"
+                                content={currentNote?.public ? "Available to everyone with link" : "Private note"}
+                                color={currentNote?.public ? "primary" : "default"}
                                 placement="bottom"
                                 showArrow={true}
                             >
@@ -102,8 +112,8 @@ export default function NavbarNoteOptions() {
                             </Tooltip>
 
                             <Tooltip
-                                content="Markup View"
-                                color="primary"
+                                content={showMarkdown ? "Hide Markdown" : "Show Markdown"}
+                                color={showMarkdown ? "primary" : "default"}
                                 placement="bottom"
                                 showArrow={true}
                             >
@@ -147,7 +157,7 @@ export default function NavbarNoteOptions() {
                                 Edit Tags
                             </Button>
                             <div className="w-full h-32 overflow-hidden">
-                                <ScrollShadow hideScrollBar size={10} className="w-full h-full">
+                                <ScrollShadow hideScrollBar size={10} className="w-full h-full px-1">
                                     <CheckboxGroup
                                         color="primary"
                                         value={currentNote?.tags || []}
@@ -177,7 +187,12 @@ export default function NavbarNoteOptions() {
                             color="danger"
                             size="sm"
                             className="w-full"
-                            variant="ghost"
+                            variant="light"
+                            startContent={<TrashIcon className="size-6" />}
+                            onClick={() => {
+                                DeleteCurrentNote();
+                                navigate("/");
+                            }}
                         >
                             Delete Note
                         </Button>
