@@ -12,24 +12,25 @@ export const CurrentNoteProvider = ({ children }) => {
     const { user } = useAuth();
 
     const SetNewCurrentNoteWithId = async (id) => {
-        setOwnerIsUser(false);
         const fetchedNote = await getNoteById(id);
         if (fetchedNote) {
             if (user?.uid !== fetchedNote?.userId) {
                 setOwnerIsUser(false);
                 setShowMarkdown(true);
                 notify("You are viewing a stranger's public note.");
-            } else {
-                setOwnerIsUser(true);
             }
             setCurrentNote(fetchedNote);
         } else {
             notify("Note not found", { type: "error" });
         }
     };
+    useEffect(() => {
+        if (!currentNote) return;
+        setOwnerIsUser(user?.uid === currentNote?.userId);
+    }, [currentNote]);
 
     const UpdateCurrentNote = (data) => {
-        if (!OwnerIsUser) return;
+        if (!OwnerIsUser || !user) return;
         setCurrentNote((prevNote) => ({
             ...prevNote,
             ...data,
@@ -37,17 +38,17 @@ export const CurrentNoteProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (!currentNote) return;
+        if (!currentNote || !OwnerIsUser || !user) return;
         UpdateServerNote();
     }, [currentNote]);
 
     const UpdateServerNote = async () => {
-        if (!currentNote || !user) return;
+        if (!currentNote || !OwnerIsUser || !user) return;
         await updateNote(currentNote?.id, currentNote);
     };
 
     const DeleteCurrentNote = async () => {
-        if (!currentNote || !user) return;
+        if (!currentNote || !OwnerIsUser || !user) return;
         await deleteNote(currentNote?.id);
     };
 
