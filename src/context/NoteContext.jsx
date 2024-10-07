@@ -10,14 +10,17 @@ export const NoteProvider = ({ children }) => {
     const [notes, setNotes] = useState([]);
     const [tags, setTags] = useState([]);
     const { user, userLoading } = useAuth();
+    const [notesLoading, setNotesLoading] = useState(true);
 
     // Fetch notes and tags when user is available
     const updateNotes = async () => {
         if (!user) return;
+        setNotesLoading(true);
         const _notes = await getAllNotes(user.uid);
         const _tags = await getAllTags(user.uid);
         setNotes(_notes || []);
         setTags(_tags || []);
+        setNotesLoading(false);
     };
 
     useEffect(() => {
@@ -67,7 +70,7 @@ export const NoteProvider = ({ children }) => {
     };
 
     return (
-        <NoteContext.Provider value={{ notes, tags, handleCreateNote, handleUpdateNote, handleDeleteNote, handleCreateTag, handleUpdateTag, handleDeleteTag }}>
+        <NoteContext.Provider value={{ notes, notesLoading, tags, handleCreateNote, handleUpdateNote, handleDeleteNote, handleCreateTag, handleUpdateTag, handleDeleteTag }}>
             {children}
         </NoteContext.Provider>
     );
