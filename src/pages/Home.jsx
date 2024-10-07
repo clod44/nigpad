@@ -36,8 +36,7 @@ export default function Home() {
                                 console.error("Error creating note:", error);
                             }
                         },
-                        className: "text-primary",
-                        iconName: "NewFile"
+                        className: "text-primary"
                     }
                 ]}
             />
