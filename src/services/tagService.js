@@ -77,6 +77,11 @@ export const updateTag = async (id, tag = {
 };
 
 export const deleteTag = async (id) => {
+    if (!id) {
+        console.error('No tag ID provided');
+        notify('There was an error deleting the tag', { type: "error" });
+        return;
+    }
     const tagRef = doc(db, 'tags', id);
     try {
         await notify("Deleting tag...", {
