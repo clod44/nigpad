@@ -3,6 +3,7 @@ import { Textarea, Input, Switch, ScrollShadow } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { CurrentNoteContext } from '../context/CurrentNoteContext';
+import useAuth from '../hooks/useAuth';
 
 export default function Edit({
     ...props
@@ -15,6 +16,8 @@ export default function Edit({
         OwnerIsUser
     } = useContext(CurrentNoteContext);
 
+    const { user } = useAuth();
+
     const { id } = useParams();
 
     useEffect(() => {
@@ -23,7 +26,7 @@ export default function Edit({
     }, [id]);
 
     const handleClientDataChange = (data) => {
-        if (!currentNote || !OwnerIsUser) return;
+        if (!currentNote || !OwnerIsUser || !user) return;
         UpdateCurrentNote(data);
     };
 
