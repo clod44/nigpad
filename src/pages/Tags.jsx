@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Chip, Select, SelectItem, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import { PencilSquareIcon, TrashIcon, SwatchIcon } from '@heroicons/react/24/outline';
 import { NoteContext } from '../context/NoteContext';
@@ -22,7 +22,7 @@ function Tags({
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalClose } = useDisclosure();
     const [editingTag, setEditingTag] = useState(null);
 
-    const [selectedColor, setSelectedColor] = useState(tagColors.includes(editingTag?.color) ? editingTag.color : 'default');
+    const [selectedColor, setSelectedColor] = useState("default");
 
 
     const handleAddTag = () => {
@@ -33,6 +33,7 @@ function Tags({
     };
 
     const EditTagPressed = (tag) => {
+        setSelectedColor(tagColors.includes(tag.color) ? tag.color : 'primary'); //this must be executed before setting EditingTag for somereason idk
         setEditingTag(tag);
         onEditModalOpen();
     };
@@ -136,6 +137,8 @@ function Tags({
                                     variant='bordered'
                                     defaultSelectedKeys={[selectedColor]}
                                     onSelectionChange={(color) => {
+                                        console.log(tagColors[0])
+                                        console.log(Object.values(color)[0]);
                                         setSelectedColor(Array.isArray(color) ? color[0] : Object.values(color)[0]);
                                     }}
                                 >
