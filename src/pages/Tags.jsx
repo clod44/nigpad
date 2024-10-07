@@ -179,7 +179,7 @@ function Tags({
                                 <Button color="danger" variant="light" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button color="primary" onPress={confirmDeleteTag}>
+                                <Button color="primary" onPress={() => confirmDeleteTag(editingTag)}>
                                     Delete
                                 </Button>
                             </ModalFooter>
