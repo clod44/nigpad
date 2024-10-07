@@ -27,21 +27,23 @@ function NavbarComponent({
         <>
             <Navbar
                 isBordered
-                className="shadow flex gap-0"
+                className="shadow gap-0"
                 maxWidth="full"
             >
-                <NavbarContent className="gap-2 flex-shrink w-auto" justify="start">
+                <NavbarContent className="gap-2" justify="start">
                     <NavbarBrand>
                         <Link to="/" className=" tracking-wide flex flex-nowrap items-center text-primary">
                             <Button isIconOnly variant="faded">
                                 <HomeIcon className="size-6 text-primary" />
                             </Button>
-                            <p className="ms-2 text-inherit text-lg hidden sm:flex">NIGPAD</p>
+                            <p className="ms-2 text-primary text-lg max-w-0 sm:max-w-full overflow-hidden transition-all duration-300">
+                                NIGPAD
+                            </p>
                         </Link>
                     </NavbarBrand>
                 </NavbarContent>
 
-                <NavbarContent justify="center" className="flex-grow w-full">
+                <NavbarContent justify="center" >
                     {isHomePage && (
                         <NavbarItem>
                             <Search />
@@ -55,7 +57,7 @@ function NavbarComponent({
 
 
                 </NavbarContent>
-                <NavbarContent justify="end" className="flex-shrink w-auto">
+                <NavbarContent justify="end">
                     <Dropdown placement="bottom-end" className="border border-foreground-300">
                         <DropdownTrigger>
                             <Avatar
