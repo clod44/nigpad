@@ -1,5 +1,5 @@
 # NIGPAD
-Simple Note taking webapp. Uses Browser's storage.
+Simple Note taking webapp.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/66246e0a-81cc-4054-846c-184e5d9da4de/deploy-status)](https://app.netlify.com/sites/nigpad/deploys)
 
@@ -8,6 +8,7 @@ Simple Note taking webapp. Uses Browser's storage.
 
 
  [Try here online](https://nigpad.netlify.app/)
+
 
 ## Roadmap
 - 

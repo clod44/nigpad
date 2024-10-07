@@ -2,7 +2,6 @@ import { useState, useEffect, createContext } from 'react';
 import { createNote, updateNote, deleteNote, getAllNotes } from '../services/noteService';
 import { createTag, updateTag, deleteTag, getAllTags } from '../services/tagService';
 import useAuth from '../hooks/useAuth';
-import { notify } from "../context/ToastContext";
 
 export const NoteContext = createContext();
 
@@ -70,7 +69,7 @@ export const NoteProvider = ({ children }) => {
     };
 
     return (
-        <NoteContext.Provider value={{ notes, notesLoading, tags, handleCreateNote, handleUpdateNote, handleDeleteNote, handleCreateTag, handleUpdateTag, handleDeleteTag }}>
+        <NoteContext.Provider value={{ notes, notesLoading, tags, handleCreateNote, handleUpdateNote, handleDeleteNote, handleCreateTag, handleUpdateTag, handleDeleteTag, updateNotes }}>
             {children}
         </NoteContext.Provider>
     );

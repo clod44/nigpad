@@ -5,15 +5,25 @@ import NoteCardSkeleton from "../components/NoteCardSkeleton";
 import Fab from "../components/Fab";
 import { NoteContext } from "../context/NoteContext";
 import { SearchContext } from "../context/SearchContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
     const navigate = useNavigate();
-    const { notes, tags, handleDeleteNote, handleCreateNote, notesLoading } = useContext(NoteContext);
+    const location = useLocation();
+    const { notes, tags, handleDeleteNote, handleCreateNote, notesLoading, updateNotes } = useContext(NoteContext);
     const { filteredNotes, setFilteredNotes } = useContext(SearchContext);
     const { user } = useAuth();
+
+    //this is a bit 🤨 but i guess it works
+    useEffect(() => {
+        // Fetch the notes again every time you navigate back to the home page
+        if (location.pathname === "/") {
+            updateNotes()
+        }
+    }, [location]);
+
 
     useEffect(() => {
         setFilteredNotes(notes);
