@@ -23,7 +23,7 @@ export default function Edit({
     }, [id]);
 
     const handleClientDataChange = (data) => {
-        if (!currentNote) return;
+        if (!currentNote || !OwnerIsUser) return;
         UpdateCurrentNote(data);
     };
 

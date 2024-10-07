@@ -29,6 +29,7 @@ export const CurrentNoteProvider = ({ children }) => {
     };
 
     const UpdateCurrentNote = (data) => {
+        if (!OwnerIsUser) return;
         setCurrentNote((prevNote) => ({
             ...prevNote,
             ...data,
