@@ -56,7 +56,7 @@ export default function TagsDropdown({
                         key={tag.id}
                         value={tag.id}
                         startContent={
-                            <Chip size="sm" style={{ backgroundColor: tag?.color || '#333333' }} variant='bordered'> </Chip>
+                            <Chip size="sm" variant='bordered' color={tag?.color || 'default'}> </Chip>
                         }
                     >
                         {tag.title}
