@@ -8,13 +8,19 @@ export const CurrentNoteContext = createContext();
 export const CurrentNoteProvider = ({ children }) => {
     const [currentNote, setCurrentNote] = useState(null);
     const [showMarkdown, setShowMarkdown] = useState(false);
+    const [OwnerIsUser, setOwnerIsUser] = useState(false);
     const { user } = useAuth();
 
     const SetNewCurrentNoteWithId = async (id) => {
+        setOwnerIsUser(false);
         const fetchedNote = await getNoteById(id);
         if (fetchedNote) {
             if (user?.uid !== fetchedNote?.userId) {
+                setOwnerIsUser(false);
+                setShowMarkdown(true);
                 notify("You are viewing a stranger's public note.");
+            } else {
+                setOwnerIsUser(true);
             }
             setCurrentNote(fetchedNote);
         } else {
@@ -53,7 +59,8 @@ export const CurrentNoteProvider = ({ children }) => {
             DeleteCurrentNote,
             showMarkdown,
             setShowMarkdown,
-            SetNewCurrentNoteWithId
+            SetNewCurrentNoteWithId,
+            OwnerIsUser
         }}>
             {children}
         </CurrentNoteContext.Provider>

@@ -1,7 +1,9 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { Chip, Select, SelectItem, Divider, Spacer, ScrollShadow, Tooltip, Input, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { Link } from 'react-router-dom';
 import { PencilSquareIcon, TrashIcon, SwatchIcon } from '@heroicons/react/24/outline';
 import { NoteContext } from '../context/NoteContext';
+import useAuth from "../hooks/useAuth";
 
 // Define the tag colors outside the Tags component
 const tagColors = [
@@ -21,6 +23,8 @@ function Tags({
     const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onOpenChange: onEditModalClose } = useDisclosure();
     const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onOpenChange: onDeleteModalClose } = useDisclosure();
     const [editingTag, setEditingTag] = useState(null);
+
+    const { user } = useAuth();
 
     const [selectedColor, setSelectedColor] = useState("default");
 
@@ -53,6 +57,15 @@ function Tags({
         handleDeleteTag(tag?.id);
         onDeleteModalClose();
     };
+
+    if (!user)
+        return (
+            <div className="flex flex-col items-center justify-center gap-2 text-center text-default py-5">
+                <PencilSquareIcon className="size-6" />
+                <p>This feature requires an <Link to="/login" className="underline text-primary">Account</Link></p>
+            </div >
+
+        );
 
     return (
         <div className="flex flex-col flex-grow overflow-y-auto">

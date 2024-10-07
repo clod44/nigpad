@@ -2,15 +2,17 @@ import { useEffect, useContext } from 'react';
 import { Textarea, Input, Switch, ScrollShadow } from "@nextui-org/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import { NoteContext } from '../context/NoteContext';
 import { CurrentNoteContext } from '../context/CurrentNoteContext';
 
-export default function Edit(props) {
+export default function Edit({
+    ...props
+}) {
     const {
         currentNote,
         UpdateCurrentNote,
         showMarkdown,
-        SetNewCurrentNoteWithId
+        SetNewCurrentNoteWithId,
+        OwnerIsUser
     } = useContext(CurrentNoteContext);
 
     const { id } = useParams();
@@ -38,6 +40,7 @@ export default function Edit(props) {
                             maxRows={99999}
                             value={currentNote?.content || ""}
                             onChange={(e) => handleClientDataChange({ content: e.target.value })}
+                            isReadOnly={!OwnerIsUser}
                         />
                     ) : (
                         <ReactMarkdown className="markdown">{currentNote?.content}</ReactMarkdown>
